@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node play.mjs:*)",
+      "Bash(node --test:*)",
+      "Bash(npm test)",
+      "Bash(node doctor.mjs)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git archive:*)",
+      "Bash(mkdir -p .verify/:*)",
+      "Bash(rm -rf .verify/base)",
+      "Bash(tar -x -C .verify/base)",
+      "Bash(node .verify/base/play.mjs:*)"
+    ],
+    "deny": [
+      "Read(./WORKSHOP.md)",
+      "Read(./WORKSHOP.ka.md)",
+      "Read(//**/solutions/**)",
+      "WebFetch",
+      "WebSearch"
+    ],
+    "blockReadsOutsideWorkingDirectories": true
+  }
+}

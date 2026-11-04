@@ -1,0 +1,9 @@
+{"seed": 1, "viewport": "desktop", "steps": [
+  {"log": "Two thorn bushes by the first bend, then wave 1"},
+  {"build": "thorn", "at": [2, 2]},
+  {"build": "thorn", "at": [7, 2]},
+  {"start_wave": true},
+  {"until": "wave_cleared", "max": 3000},
+  {"expect": {"phase": "build", "lives": 10}},
+  {"screenshot": "first-wave.png"}
+]}

@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI in the SDLC · Session 1 · From the artificial neuron to the terminal agent</title>
+<link rel="stylesheet" href="assets/deck.css">
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide center" data-era="0" data-time="0:00" data-rail="off">
+  <h1 class="xxl">The world has changed.</h1>
+</section>
+
+<section class="slide" data-era="0" data-rail="off">
+  <div class="kicker">The world has changed</div>
+  <h1>Merged pull requests on GitHub</h1>
+  <figure class="chart-frame big">
+    <img src="media/octoverse/visual-1.jpg" alt="GitHub Octoverse 2026: pushes, commits, Actions jobs and merged pull requests for 2024, 2025 and 2026. Merged pull requests: 402M, 538M, 1.3B.">
+    <span class="ring" data-cls="1:on" data-beat="a ring on the merged pull requests: 402M → 538M → 1.3B" style="left:75.5%; top:30%; width:23.5%; height:58%"></span>
+  </figure>
+  <div class="source bottom">GitHub Octoverse 2026 (Oct 28), github.blog; vendor-reported. Each year is the 12 months ending September 30.</div>
+</section>
+
+<section class="slide" data-era="0" data-rail="off">
+  <div class="kicker">The world has changed</div>
+  <h1>GitHub activity, month by month</h1>
+  <figure class="chart-frame big">
+    <img src="media/octoverse/spotlight-2.jpg" alt="GitHub Octoverse 2026: activity compared with September 2025. Commits reach about 6×, Actions jobs about 4.8×, pushes about 4.5× and merged PRs about 3.9× by September 2026, with an inflection point in June.">
+    <span class="ring wide" data-cls="1:on" data-beat="the whole stretch after June is highlighted: the Opus 4.8 and Fable 5 era" style="left:58.6%; top:28%; width:20.6%; height:63%"><b class="ring-label">From June: Opus 4.8 and Fable 5</b></span>
+  </figure>
+  <div class="source bottom">GitHub Octoverse 2026 (Oct 28), github.blog; vendor-reported. Activity compared with September 2025 (1×).</div>
+</section>
+
+<section class="slide" data-era="0">
+  <div class="kicker">The world has changed</div>
+  <h1>Seven people replaced git for Anthropic’s monorepo.</h1>
+  <div class="stats" data-widget="count" data-at="0" data-onenter style="margin-top:40px">
+    <div class="stat"><div class="v"><span data-to="7">7</span></div><div class="l">people built the new system</div></div>
+    <div class="stat"><div class="v"><span data-to="5">5</span> <small>months</small></div><div class="l">to build it and migrate everyone</div></div>
+    <div class="stat"><div class="v"><span data-to="10" data-suffix="×">10×</span></div><div class="l">more code merged per day, during the migration</div></div>
+  </div>
+  <p class="lead" data-step="1" style="margin-top:30px">And OpenAI’s inference is run by a team of about <b>20 engineers</b>.</p>
+  <div class="source">Scion: “Redesigning source control at Anthropic”, anthropic.com/engineering/redesigning-source-control, Oct 2026; vendor-reported. Anthropic notes it is not a general replacement for git.</div>
+</section>
+
+<section class="slide" data-era="0">
+  <div class="kicker">The world has changed</div>
+  <h1>OpenAI says its AI solved <span style="white-space:nowrap">Navier–Stokes</span>, a Millennium Prize problem.</h1>
+  <div class="stats" data-widget="count" data-at="0" data-onenter style="margin-top:40px">
+    <div class="stat"><div class="v"><span data-to="1">1</span></div><div class="l">of the 7 problems had been officially solved before (Poincaré, 2010)</div></div>
+    <div class="stat"><div class="v"><span data-to="88">88</span> <small>hours</small></div><div class="l">for OpenAI’s agents to reach the result</div></div>
+    <div class="stat"><div class="v"><span data-to="17">17</span> <small>hours</small></div><div class="l">more to write the proof in Lean, so a computer can check it</div></div>
+  </div>
+  <p class="lead" data-step="1" style="margin-top:30px">Gold at the International Math Olympiad was 2025. This is far above IMO level: <b>open research mathematics</b>.</p>
+  <div class="source">OpenAI, “On the Navier–Stokes Millennium Prize Problem”, openai.com, 8 Sep 2026; vendor-reported. Not yet verified by mathematicians: the Clay Institute says it has “apparently been settled” and considers a solution only after peer-reviewed publication.</div>
+</section>
+
+<section class="slide center" data-era="0">
+  <h1 class="xl">But how did we get here?</h1>
+  <p class="lead" data-step="1" style="font-size:40px; color:var(--ink)">We’re going to catch up on everything you might or might not have missed, and equip you for the frontier.</p>
+</section>
+
+<section class="slide center" data-era="0">
+  <h1 class="xl">We start in 2022.<br>We reach the bleeding edge.</h1>
+  <p class="lead" data-step="1">By the end of session 2 you’ll have the skills to work like those teams.</p>
+</section>
+
+<section class="slide center" data-era="0">
+  <div class="kicker">AI in the SDLC <span class="sep">/</span> Session 1 of 2</div>
+  <h1 class="xxl">From the artificial neuron<br>to the terminal agent</h1>
+  <p class="lead">Eight eras, from ChatGPT to October 2026. Today: eras 1 to 4, the theory underneath.</p>
+</section>
+
+<section class="slide center" data-era="0" data-time="0:04" data-rail="off" data-title="Who I am: Davit, Software Development Engineer @ AWS DMS">
+  <div class="kicker">Who I am</div>
+  <div class="whoami">
+    <div class="side"><img class="photo" src="media/who/presenter.jpg" alt="Photo of Davit"><b>Davit</b><span>Software Development Engineer</span></div>
+    <div class="at">@</div>
+    <div class="side"><img class="logo" src="media/who/aws-dms.png" alt="AWS Database Migration Service icon"><b>AWS DMS</b><span>AWS Database Migration Service</span></div>
+  </div>
+  <div class="cols-3 whoami-why">
+    <div class="card" data-step="1"><div class="tag">Since end of 2024</div><p class="body">A greenfield migration architecture, built as AI took off</p></div>
+    <div class="card" data-step="2"><div class="tag">My team</div><p class="body">The highest AI adoption rate in all of AWS</p></div>
+    <div class="card" data-step="3"><div class="tag">AI champion</div><p class="body">Named in an email from our databases VP to the whole org</p></div>
+  </div>
+</section>
+
+<section class="slide" data-era="0" data-time="0:05">
+  <div class="kicker">1943 → 2026</div>
+  <div class="swap">
+    <h1 data-cls="1:out">Eighty years of AI, and the last three are crowded</h1>
+    <h1 class="later" data-cls="1:in 2:out">From 2012, deep learning: then transformers, then ChatGPT</h1>
+    <h1 class="later" data-cls="2:in">Since ChatGPT: a new Claude model every few weeks</h1>
+  </div>
+  <div class="fill" data-widget="timeline" data-label="timeline zoom"></div>
+</section>
+
+<section class="slide center" data-era="0">
+  <p class="pre">Same tools. Same models.</p>
+  <h1 class="statement" data-step="1">So why do some people get disproportionate results?</h1>
+  <p class="lead" data-step="2" style="margin-top:6px"><span class="mark">They know what’s underneath.</span> Every era left a layer we still stand on.</p>
+</section>
+
+<section class="slide center" data-era="0">
+  <div class="tag" style="align-self:flex-start">How each era works</div>
+  <h1>Every era: what became possible, what changed since, and what still holds</h1>
+  <div class="cols-3" style="margin-top:24px">
+    <div class="card" data-step="1"><h3>What became possible</h3><p class="body">The capability, how people worked, and where the human sat</p></div>
+    <div class="card" data-step="2"><h3>Then and now</h3><p class="body">What people did then, and what we do instead today</p></div>
+    <div class="card" data-step="3" style="border-color:var(--ink)"><h3>Lessons that still hold</h3><p class="body">What to keep, even as the tools change</p></div>
+  </div>
+</section>
+
+<section class="slide era-card" data-era="1" data-time="0:08">
+  <div class="num">Era 1</div>
+  <h1>ChatGPT</h1>
+  <div class="dates">Nov 2022 – Q1 2023</div>
+  <div class="facts">
+    <div class="fact" data-step="1"><div class="h"><i style="background:var(--ink)"></i>Became possible</div><div class="v">Chat LLMs, then GPT-4</div></div>
+    <div class="fact" data-step="2"><div class="h"><i style="background:var(--ink-2)"></i>The workflow</div><div class="v">Copy-paste from ChatGPT; magic prompt templates</div></div>
+    <div class="fact" data-step="3"><div class="h"><i style="background:var(--human)"></i>The human</div><div class="v">Types and integrates; reviews every line</div></div>
+  </div>
+</section>
+
+<section class="slide" data-era="1">
+  <div class="kicker"><span class="dot"></span>Era 1 · ChatGPT <span class="sep">/</span> What is an LLM</div>
+  <h1>An LLM is a function: text in, the next token out</h1>
+  <div class="fill" data-widget="llmfn" data-label="an LLM as a function" style="margin-top:20px"></div>
+</section>
+
+<section class="slide" data-era="1">
+  <div class="kicker"><span class="dot"></span>Era 1 · ChatGPT <span class="sep">/</span> Writing, one token at a time</div>
+  <h1>Pick a token, append it, run it again</h1>
+  <div class="fill" data-widget="nexttoken" data-label="next-token prediction"></div>
+</section>
+
+<section class="slide" data-era="1">
+  <div class="kicker"><span class="dot"></span>Era 1 · ChatGPT <span class="sep">/</span> Tokens</div>
+  <h1>It doesn’t see letters or words. It sees tokens.</h1>
+  <div class="cols-3" style="margin-top:26px">
+    <div class="card" data-step="1"><span class="tag">Letters</span><div class="tokrow" translate="no"><i>u</i><i>n</i><i>b</i><i>e</i><i>l</i><i>i</i><i>e</i><i>v</i><i>a</i><i>b</i><i>l</i><i>e</i></div><p class="body">12 pieces for one word. Sequences get long, and cost grows with length.</p></div>
+    <div class="card" data-step="2"><span class="tag">Words</span><div class="tokrow" translate="no"><i>unbelievable</i></div><p class="body">1 piece, but millions of words, typos and new names: an endless vocabulary.</p></div>
+    <div class="card" data-step="3" style="border-color:var(--cc)"><span class="tag" style="color:var(--cc-550)">Tokens</span><div class="tokrow" translate="no"><i class="on">un</i><i class="on">believ</i><i class="on">able</i></div><p class="body">3 common chunks. A vocabulary of 100,000–200,000 pieces covers any text.</p></div>
+  </div>
+  <p class="lead" data-step="4" style="margin-top:24px">Tokens are the unit of everything: the input, the output, the context window, and the bill.</p>
+</section>
+
+<section class="slide" data-era="1">
+  <div class="kicker"><span class="dot"></span>Era 1 · ChatGPT <span class="sep">/</span> Tokens</div>
+  <h1>A tokenizer is learned to make common text short</h1>
+  <div class="fill" data-widget="bpe" data-label="building a tokenizer" style="margin-top:24px"></div>
+</section>
+
+<section class="slide" data-era="1">
+  <div class="kicker"><span class="dot"></span>Era 1 · ChatGPT <span class="sep">/</span> Tokens</div>
+  <h1>Same sentence, very different cost</h1>
+  <div class="fill" data-widget="tokenizer" data-label="tokenizer"></div>
+  <div class="source">Open GPT tokenizers (gpt-tokenizer), running in this page. Claude’s tokenizer is not public.</div>
+</section>
+
+<section class="slide" data-era="1">
+  <div class="kicker"><span class="dot"></span>Era 1 · ChatGPT <span class="sep">/</span> Tokens</div>
+  <h1>Every provider tokenizes differently, so price per million tokens isn’t comparable</h1>
+  <div class="cmp">
+    <div class="cmp-row" data-step="1"><b>English</b><div><span style="width:13%"></span><em>16</em></div><div><span style="width:13%"></span><em>16</em></div></div>
+    <div class="cmp-row" data-step="1"><b>Japanese</b><div><span style="width:24%"></span><em>28</em></div><div><span style="width:15%"></span><em>18</em></div></div>
+    <div class="cmp-row" data-step="1"><b>Georgian</b><div><span style="width:100%"></span><em>119</em></div><div><span style="width:21%"></span><em>25</em></div></div>
+    <div class="cmp-head"><span></span><span>GPT-4 tokenizer (2023)</span><span>GPT-4o tokenizer (2024)</span></div>
+  </div>
+  <p class="lead" data-step="2" style="margin-top:22px">Claude uses its own tokenizer, with its own counts. A cheaper price per token can still mean a more expensive answer.</p>
+  <p class="lead" data-step="3" style="color:var(--ink); font-weight:600">Compare cost per task, not price per token. More on that next time.</p>
+</section>
+
+<section class="slide center" data-era="1">
+  <div class="ask" style="align-items:center">
+    <div class="bubble">?</div>
+    <div><div class="label">💬 In the chat</div><h1 class="xl" style="font-size:84px">Type a random number between 1 and 10.</h1></div>
+  </div>
+</section>
+
+<section class="slide" data-era="1">
+  <div class="kicker"><span class="dot"></span>Era 1 · ChatGPT <span class="sep">/</span> Why 7?</div>
+  <h1>Random, humans, and the model</h1>
+  <div class="fill" data-widget="pickcurve" data-label="random, humans, LLM" style="margin-top:4px"></div>
+</section>
+
+<section class="slide" data-era="1">
+  <div class="kicker"><span class="dot"></span>Era 1 · ChatGPT <span class="sep">/</span> Training</div>
+  <h1>Why 7? Training: imitate, then sharpen, then reward</h1>
+  <div class="fill" data-widget="training" data-label="three stages of training" style="margin-top:16px"></div>
+</section>
+
+<section class="slide center" data-era="1">
+  <p class="pre">We know how an LLM works.</p>
+  <h1 class="statement" data-step="1">But how does a chat with an LLM work?</h1>
+</section>
+
+<section class="slide" data-era="1">
+  <div class="kicker"><span class="dot"></span>Era 1 · ChatGPT <span class="sep">/</span> How a chat works</div>
+  <h1>Every turn, the app sends the whole conversation</h1>
+  <div class="fill" data-widget="chatsend" data-label="what each chat request sends" style="margin-top:4px"></div>
+</section>
+
+<section class="slide breather center" data-era="1">
+  <div class="badge"><span class="pause"></span>Fun fact · 1966</div>
+  <div class="quote">Would you mind leaving the room, please?</div>
+  <div class="who">Joseph Weizenbaum’s secretary, a few exchanges into a chat with ELIZA, a pattern-matching script she knew was a script.</div>
+  <div class="lesson">Fluency is not understanding.</div>
+</section>
+
+<section class="slide" data-era="1">
+  <div class="kicker"><span class="dot"></span>Era 1 · ChatGPT <span class="sep">/</span> Then and now</div>
+  <h1>2022–23: copy-paste from ChatGPT, and “prompt engineering”</h1>
+  <div class="tn">
+    <div class="tn-head"><span>Then</span><span></span><span>Now</span></div>
+    <div class="tn-row" data-step="1"><div class="then">Prompt engineering was the skill: magic templates</div><i>→</i><div class="now">Prompt quality matters much less, as long as you convey your intent</div></div>
+    <div class="tn-row" data-step="2"><div class="then">Role-play prompts: “You are a world-class engineer…”</div><i>→</i><div class="now">Little effect on today’s models</div></div>
+    <div class="tn-row" data-step="3"><div class="then">“Think step by step” for better reasoning</div><i>→</i><div class="now">Reasoning models think on their own (since Sep 2024)</div></div>
+    <div class="tn-row" data-step="4"><div class="then">Copy code out of the chat, paste it into the editor</div><i>→</i><div class="now">Agents edit your files and run your tests</div></div>
+  </div>
+</section>
+
+<section class="slide" data-era="1">
+  <div class="kicker"><span class="dot"></span>Era 1 · ChatGPT <span class="sep">/</span> Lessons that still hold</div>
+  <h1>Lessons that still hold</h1>
+  <div class="lessons">
+    <div data-step="1"><span class="n">1</span><b>It’s a function of its input.</b><p>Same model, better input, better output. What you give it is your lever.</p></div>
+    <div data-step="2"><span class="n">2</span><b>On its own, it’s stateless.</b><p>It remembers nothing between calls. It works on the state we send it: the conversation, files, instructions.</p></div>
+    <div data-step="3"><span class="n">3</span><b>Don’t compare price per token.</b><p>Know what a token is: every provider counts differently. Compare cost per task.</p></div>
+  </div>
+</section>
+
+<section class="slide era-card" data-era="2" data-time="0:30">
+  <div class="num">Era 2</div>
+  <h1>Small context</h1>
+  <div class="dates">2023</div>
+  <div class="facts">
+    <div class="fact" data-step="1"><div class="h"><i style="background:var(--ink)"></i>Became possible</div><div class="v">Function calling (Jun); 100k–200k windows</div></div>
+    <div class="fact" data-step="2"><div class="h"><i style="background:var(--ink-2)"></i>The workflow</div><div class="v">Chat with tools; RAG over docs</div></div>
+    <div class="fact" data-step="3"><div class="h"><i style="background:var(--human)"></i>The human</div><div class="v">Reviews every line</div></div>
+  </div>
+</section>
+
+<section class="slide center" data-era="2">
+  <p class="pre">It only knows its training data, and that is months old.</p>
+  <h1 class="statement" data-step="1">So how can it tell you the weather in Tbilisi?</h1>
+  <p class="lead" data-step="2" style="margin-top:6px; color:var(--ink)">June 2023: function calling.</p>
+</section>
+
+<section class="slide" data-era="2">
+  <div class="kicker"><span class="dot"></span>Era 2 · Small context <span class="sep">/</span> Function calling, Jun 2023</div>
+  <h1>Function calling: the model writes the call, the server runs it</h1>
+  <div class="fc">
+    <div data-step="1"><div class="fc-h"><span>1</span>The server describes a function</div><div class="term light">{
+  "name": "get_weather",
+  "description": "Weather in a city",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "city": { "type": "string" }
+    },
+    "required": ["city"]
+  }
+}</div></div>
+    <div class="fc-arrow" data-step="2">→</div>
+    <div data-step="2"><div class="fc-h"><span>2</span>The model replies with a call, not an answer</div><div class="term light">{
+  "type": "tool_use",
+  "name": "get_weather",
+  "input": { "city": "Tbilisi" }
+}</div></div>
+    <div class="fc-arrow" data-step="3">→</div>
+    <div data-step="3"><div class="fc-h"><span>3</span>The server runs it and sends the result back</div><div class="term light">{
+  "type": "tool_result",
+  "content": "18 °C, sunny"
+}</div></div>
+  </div>
+  <p class="lead" data-step="4" style="margin-top:6px">The model still only writes text, now in a shape code can run.</p>
+  <div class="source">Message shapes from the Claude API, simplified. OpenAI introduced function calling on 13 Jun 2023 with a similar format.</div>
+</section>
+
+<section class="slide" data-era="2">
+  <div class="kicker"><span class="dot"></span>Era 2 · Small context <span class="sep">/</span> Function calling, turn by turn</div>
+  <h1>One turn in the chat, two requests to the model</h1>
+  <div class="fill" data-widget="fnseq" data-label="function calling, side by side" style="margin-top:2px"></div>
+</section>
+
+<section class="slide" data-era="2">
+  <div class="kicker"><span class="dot"></span>Era 2 · Small context <span class="sep">/</span> The problem</div>
+  <h1>Useful. But the more context we added, the worse the answers got.</h1>
+  <div class="fill" data-widget="lostmiddle" data-label="lost in the middle" style="margin-top:14px"></div>
+</section>
+
+<section class="slide" data-era="2">
+  <div class="kicker"><span class="dot"></span>Era 2 · Small context <span class="sep">/</span> Attention</div>
+  <h1>Why: every token looks at every earlier token</h1>
+  <div class="fill" data-widget="attention" data-label="attention"></div>
+  <p class="small" data-step="5" style="max-width:1300px">Attention is shared out among all earlier tokens, so the more there are, the thinner it is spread, and the cost grows with the square of the length.</p>
+</section>
+
+<section class="slide" data-era="2">
+  <div class="kicker"><span class="dot"></span>Era 2 · Small context <span class="sep">/</span> The race</div>
+  <h1>Then the race began: bigger windows, better recall</h1>
+  <div class="fill" data-widget="race" data-label="context sizes" style="margin-top:20px"></div>
+  <p class="lead" data-step="6">Recall improved too: today’s models find what is in their window very well.</p>
+  <div class="source">Line counts are rough: about 10 tokens per line of code.</div>
+</section>
+
+<section class="slide" data-era="2">
+  <div class="kicker"><span class="dot"></span>Era 2 · Small context <span class="sep">/</span> Context</div>
+  <h1>Everything is context. Your message is the smallest part.</h1>
+  <div class="fill" data-widget="context" data-label="context window"></div>
+  <p class="small">In Claude Code, run <span class="mono">/context</span> to see what is in yours.</p>
+</section>
+
+<section class="slide breather center" data-era="2">
+  <div class="badge"><span class="pause"></span>Fun fact · 2017</div>
+  <div class="quote">Attention Is All You Need</div>
+  <div class="who">Eight Google authors. Llion Jones proposed the title, a riff on the Beatles’ “All You Need Is Love”; some co-authors found it too cute.</div>
+  <div class="lesson">Modern AI is named after a Beatles song.</div>
+</section>
+
+<section class="slide" data-era="2">
+  <div class="kicker"><span class="dot"></span>Era 2 · Small context <span class="sep">/</span> Then and now</div>
+  <h1>2023: tools arrive, and context is the bottleneck</h1>
+  <div class="tn">
+    <div class="tn-head"><span>Then</span><span></span><span>Now</span></div>
+    <div class="tn-row" data-step="1"><div class="then">4k–32k windows: nothing fit</div><i>→</i><div class="now">1M-token windows</div></div>
+    <div class="tn-row" data-step="2"><div class="then">RAG for everything: chunk, embed, retrieve the top matches, stuff the prompt</div><i>→</i><div class="now">For code, agents grep and read. Embeddings still help for concept search and big non-code knowledge</div></div>
+    <div class="tn-row" data-step="3"><div class="then">Facts got lost in the middle of long prompts</div><i>→</i><div class="now">Strong recall, but a focused context still wins</div></div>
+  </div>
+</section>
+
+<section class="slide" data-era="2">
+  <div class="kicker"><span class="dot"></span>Era 2 · Small context <span class="sep">/</span> Lessons that still hold</div>
+  <h1>Lessons that still hold</h1>
+  <div class="lessons">
+    <div data-step="1"><span class="n">1</span><b>It only knows its training data and its context.</b><p>For anything newer or private, give it a way to look it up.</p></div>
+    <div data-step="2"><span class="n">2</span><b>Everything is context. Curate it.</b><p>Every token competes for attention. In Claude Code, <span class="mono">/context</span> shows what’s in yours.</p></div>
+    <div data-step="3"><span class="n">3</span><b>A bigger window isn’t a reason to fill it.</b><p>Recall is strong now, but a focused context still answers better, faster and cheaper.</p></div>
+  </div>
+</section>
+
+<section class="slide era-card" data-era="3" data-time="0:44">
+  <div class="num">Era 3</div>
+  <h1>Tools, agents, MCP</h1>
+  <div class="dates">Mid-2023 – 2024</div>
+  <div class="facts">
+    <div class="fact" data-step="1"><div class="h"><i style="background:var(--ink)"></i>Became possible</div><div class="v">Tool calling, Claude 3.5 Sonnet, o1, MCP</div></div>
+    <div class="fact" data-step="2"><div class="h"><i style="background:var(--ink-2)"></i>The workflow</div><div class="v">IDE agents with accept / reject diffs</div></div>
+    <div class="fact" data-step="3"><div class="h"><i style="background:var(--human)"></i>The human</div><div class="v">Reviews every hunk; approves each step</div></div>
+  </div>
+</section>
+
+<section class="slide center" data-era="3">
+  <p class="pre">It can call functions and tell us the weather.</p>
+  <h1 class="statement" data-step="1">How do we make it do real work, in our repo?</h1>
+  <p class="lead" data-step="2" style="margin-top:6px">We’ll invent what’s missing, one problem at a time. Each step is stamped with when the industry shipped it.</p>
+</section>
+
+<section class="slide" data-era="3" data-title="Invent the harness, steps 1–5">
+  <div class="kicker"><span class="dot"></span>Era 3 · Tools, agents, MCP <span class="sep">/</span> Invent the harness</div>
+  <div class="fill" data-widget="harness" data-from="0" data-to="8" data-label="harness build-up, steps 1–5"></div>
+</section>
+
+<section class="slide breather center" data-era="3">
+  <div class="badge"><span class="pause"></span>Fun fact · Dec 2023</div>
+  <div class="quote">That’s a deal, and that’s a legally binding offer – no takesies backsies.</div>
+  <div class="who">Chevrolet of Watsonville’s chatbot, after a user told it to agree with everything. It offered a 2024 Tahoe for $1. Not honored; the bot was pulled.</div>
+  <div class="lesson">User input is not policy. That’s why we need the gate.</div>
+</section>
+
+<section class="slide" data-era="3" data-title="Invent the harness, step 6">
+  <div class="kicker"><span class="dot"></span>Era 3 · Tools, agents, MCP <span class="sep">/</span> Invent the harness</div>
+  <div class="fill" data-widget="harness" data-from="8" data-to="10" data-label="harness build-up, step 6"></div>
+</section>
+
+<section class="slide" data-era="3">
+  <div class="kicker"><span class="dot"></span>Era 3 · Tools, agents, MCP <span class="sep">/</span> MCP, Nov 2024</div>
+  <h1>MCP: one plug, instead of a cable for every pair</h1>
+  <div data-widget="mcp" data-label="N×M integrations vs MCP" style="margin-top:0"></div>
+  <p class="body" data-step="3">How: a server lists its tools, each with a name and its inputs. The agent shows that list to the model. When the model calls one, the server runs it and returns the result.</p>
+</section>
+
+<section class="slide" data-era="3" data-title="Invent the harness, step 7">
+  <div class="kicker"><span class="dot"></span>Era 3 · Tools, agents, MCP <span class="sep">/</span> Invent the harness</div>
+  <div class="fill" data-widget="harness" data-from="10" data-to="11" data-label="harness build-up, step 7"></div>
+</section>
+
+<section class="slide" data-era="3" data-time="1:00" data-rail="off" data-title="Break, 10 minutes">
+  <div class="kicker">Break · 10 minutes</div>
+  <div style="margin-top:40px; max-width:900px"><div data-widget="timer" data-min="10" data-label="10-minute timer"></div></div>
+</section>
+
+<section class="slide" data-era="3" data-time="1:10">
+  <div class="kicker"><span class="dot"></span>Era 3 · Tools, agents, MCP <span class="sep">/</span> Demo</div>
+  <h1>We built it on paper. Here’s what my agent actually sends.</h1>
+  <div class="fill" data-widget="trace" data-label="request trace"></div>
+</section>
+
+<section class="slide" data-era="3">
+  <div class="kicker"><span class="dot"></span>Era 3 · Tools, agents, MCP <span class="sep">/</span> Prompt caching, Aug 2024</div>
+  <h1>The prefix rule: keep the beginning identical</h1>
+  <div class="fill" data-widget="cache" data-label="cache prefix"></div>
+</section>
+
+<section class="slide" data-era="3">
+  <div class="kicker"><span class="dot"></span>Era 3 · Tools, agents, MCP <span class="sep">/</span> Then and now</div>
+  <h1>2024: IDE agents, and you approved every step</h1>
+  <div class="tn">
+    <div class="tn-head"><span>Then</span><span></span><span>Now</span></div>
+    <div class="tn-row" data-step="1"><div class="then">Accept or reject every hunk in the IDE</div><i>→</i><div class="now">Classifiers approve; you review the result</div></div>
+    <div class="tn-row" data-step="2"><div class="then">Paste files into the chat</div><i>→</i><div class="now">The agent reads what it needs</div></div>
+    <div class="tn-row" data-step="3"><div class="then">Every tool integration built by hand</div><i>→</i><div class="now">MCP servers for Jira, databases, browsers</div></div>
+  </div>
+</section>
+
+<section class="slide" data-era="3">
+  <div class="kicker"><span class="dot"></span>Era 3 · Tools, agents, MCP <span class="sep">/</span> Lessons that still hold</div>
+  <h1>Lessons that still hold</h1>
+  <div class="lessons">
+    <div data-step="1"><span class="n">1</span><b>The model writes text. The harness does the work.</b><p>Tools, the loop, memory, the gate: the harness matters as much as the model.</p></div>
+    <div data-step="2"><span class="n">2</span><b>Keep the beginning stable.</b><p>An unchanged prefix is read from cache at a tenth of the price. That makes long sessions affordable.</p></div>
+    <div data-step="3"><span class="n">3</span><b>Load only what the task needs.</b><p>MCP connects systems and skills bring instructions, both on demand. Everything else costs context.</p></div>
+  </div>
+</section>
+
+<section class="slide era-card" data-era="4" data-time="1:18">
+  <div class="num">Era 4</div>
+  <h1>The terminal agent</h1>
+  <div class="dates">2025 H1</div>
+  <div class="facts">
+    <div class="fact" data-step="1"><div class="h"><i style="background:var(--ink)"></i>Became possible</div><div class="v">Claude Code (Feb 24), Claude 4, cloud agents (May)</div></div>
+    <div class="fact" data-step="2"><div class="h"><i style="background:var(--ink-2)"></i>The workflow</div><div class="v">A CLI agent in a loop, with CLAUDE.md</div></div>
+    <div class="fact" data-step="3"><div class="h"><i style="background:var(--human)"></i>The human</div><div class="v">Sets the goal, reviews the PR</div></div>
+  </div>
+  <div data-step="4" style="margin-top:44px"><div data-widget="lanechips" data-era="4"></div></div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> February 2025</div>
+  <h1>Vibe coding and Claude Code arrived three weeks apart</h1>
+  <div class="feb">
+    <div class="feb-line"></div>
+    <div class="feb-pt" data-step="1" style="left:12%"><div class="d">Feb 2</div><div class="t">Karpathy coins<br>“vibe coding”</div></div>
+    <div class="feb-pt cc" data-step="2" style="left:78%"><div class="d">Feb 24</div><div class="t">Claude Code ships<br>with Claude 3.7 Sonnet</div></div>
+  </div>
+  <p class="lead" data-step="3">Within months “vibe coding” became “augmented coding”, then “agentic engineering”.</p>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> The harness, as a product</div>
+  <h1>Claude Code is the harness we just invented</h1>
+  <div class="map">
+    <div class="map-head"><span>What we invented</span><span></span><span>In Claude Code</span></div>
+    <div class="map-row" data-step="1"><span>Run tools on our machine</span><i>→</i><b>Read, Edit, Bash, Grep</b></div>
+    <div class="map-row" data-step="2"><span>The loop</span><i>→</i><b>Runs until done; Esc interrupts</b></div>
+    <div class="map-row" data-step="3"><span>Always-injected file</span><i>→</i><b>CLAUDE.md</b></div>
+    <div class="map-row" data-step="4"><span>Manage the context</span><i>→</i><b>Caching, /compact, subagents</b></div>
+    <div class="map-row" data-step="5"><span>A gate</span><i>→</i><b>Permission prompts and modes</b></div>
+    <div class="map-row" data-step="6"><span>A standard plug</span><i>→</i><b>MCP servers</b></div>
+    <div class="map-row" data-step="7"><span>Instructions on demand</span><i>→</i><b>Skills, from Oct 2025</b></div>
+  </div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> The basic loop</div>
+  <div class="row" style="gap:60px">
+    <div data-widget="loop4" data-label="the four-step loop"></div>
+    <div style="flex:1">
+      <h1>Tests are the success signal</h1>
+      <p class="lead" style="margin-top:24px">Explore, plan, implement, verify. The loop only closes if the agent can check its own work.</p>
+      <p class="small" style="margin-top:24px">Anthropic, “Claude Code: best practices for agentic coding”, Apr 2025: TDD “becomes even more powerful”.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-era="4" data-time="1:22">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> The difference a test makes</div>
+  <h1>One bug, three eras</h1>
+  <div class="fill" data-widget="threeeras" data-label="one bug fixed three ways"></div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> Memory</div>
+  <div class="row top" style="gap:60px">
+    <div style="width:560px; flex:none">
+      <h1>CLAUDE.md: only what isn’t obvious</h1>
+      <p class="lead" style="margin-top:24px">It is added to every request, so every line costs context. If Claude would find it in a minute, delete it.</p>
+      <p class="body" data-step="3" style="margin-top:24px">Same idea, any agent: <span class="mono">AGENTS.md</span> (Aug 2025).</p>
+    </div>
+    <div class="term light" style="flex:1; font-size:23px">
+<span class="c"># CLAUDE.md</span>
+<span data-cls="1:strike">This is a TypeScript project.</span>
+<span data-cls="1:strike">Use good variable names.</span>
+<span data-cls="1:strike">Tests live in tests/.</span>
+<span data-cls="2:mark">Run tests with `pnpm test:unit`; `pnpm test` hits prod.</span>
+<span data-cls="2:mark">Never edit src/gen/: it is generated from schema/.</span>
+<span data-cls="2:mark">Money is integer cents. No floats, ever.</span>
+<span data-cls="1:strike">Write clean code.</span>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> Skills</div>
+  <h1>Skills: instructions that load only when a task needs them</h1>
+  <div class="fill" data-widget="skillload" data-label="how skills load" style="margin-top:20px"></div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> Skills in practice</div>
+  <div class="row top" style="gap:56px">
+    <div style="width:520px; flex:none">
+      <h1>Skills in practice: the description is the trigger</h1>
+      <p class="lead" style="margin-top:24px">A skill is a folder with a SKILL.md. Until a task matches, Claude reads only its description.</p>
+      <p class="body" data-step="2" style="margin-top:24px">So write the description like a search query: when to use it, in the words a user would type.</p>
+    </div>
+    <div class="term light" style="flex:1; font-size:22px"><span class="c"># .claude/skills/release-notes/SKILL.md</span>
+---
+name: release-notes
+<span data-cls="2:mark">description: Write release notes from merged PRs.
+  Use when asked for a changelog or release notes.</span>
+---
+<span data-step="1">1. List PRs merged since the last tag: `gh pr list …`
+2. Group them: features, fixes, internal.
+3. One line each, user-facing words, no PR jargon.
+4. End with upgrade notes if any config changed.</span></div>
+  </div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> A skill worth having</div>
+  <h1>/verify: prove it by running it, not by reading it</h1>
+  <div class="row top" style="gap:56px; margin-top:4px">
+    <div style="flex:1">
+      <div class="vsteps">
+        <div data-step="1"><span>1</span><b>Pin the question</b><p>Something you can observe: which input, what counts as yes</p></div>
+        <div data-step="2"><span>2</span><b>Run it</b><p>The real program, on that input</p></div>
+        <div data-step="3"><span>3</span><b>Read the output</b><p>What a user would check, quoted line by line</p></div>
+        <div data-step="4"><span>4</span><b>Before and after</b><p>For a change: the same input, old code and new</p></div>
+        <div data-step="5"><span>5</span><b>Answer with evidence</b><p>The verdict, the command, the lines that prove it</p></div>
+      </div>
+      <p class="body" data-step="6" style="margin-top:18px; color:var(--ink)">Tests check what someone thought of. /verify looks at what actually comes out.</p>
+    </div>
+    <div style="width:470px; flex:none">
+      <div class="small" style="margin-bottom:8px">In the workshop, the output is a game screen</div>
+      <img class="shot" src="media/garden-guard.png" alt="Garden Guard after wave 1: a garden road, two thorn bushes, trees, the greenhouse at the end, the HUD reading Wave 2/3, 10 lives, 80 gold, and the build bar.">
+    </div>
+  </div>
+</section>
+
+<section class="slide breather center" data-era="4">
+  <div class="badge"><span class="pause"></span>Fun fact · spring 2025</div>
+  <div class="quote nq">The shop agent offered to deliver in person, in a blue blazer and red tie.</div>
+  <div class="who">Project Vend, Anthropic with Andon Labs: Claude ran an office shop for a month. It sold tungsten cubes below cost and invented a Venmo account.</div>
+  <div class="lesson">Long-running agents need a harness: memory, checks, limits.</div>
+</section>
+
+<section class="slide" data-era="4" data-time="1:32">
+  <div class="kicker">Workshop · Set up</div>
+  <h1>First, get the game running</h1>
+  <div class="moves sm" style="margin-top:40px"><div><span>1</span><span>Node 18+, Chrome or Edge, and the Herdr app: <span class="mono">curl -fsSL https://releases.herdr.dev/app/install.sh | sh</span></span></div><div><span>2</span><span>Get the garden-guard repo; <span class="mono">node doctor.mjs</span> until ready</span></div><div><span>3</span><span>Run <span class="mono">claude</span> there once: “Yes, I trust this folder”</span></div></div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker">Workshop · 20 minutes</div>
+  <h1>Write /verify, then race it against Claude without it</h1>
+  <div class="row top" style="gap:40px; margin-top:6px">
+    <div class="cols-2" style="flex:1">
+      <div class="card"><span class="tag">1</span><h3 style="margin-top:14px">Play it first</h3><p class="body">Open <span class="mono">index.html</span>, plant a few towers and start a wave, so you know what Claude should see.</p></div>
+      <div class="card"><span class="tag">2</span><h3 style="margin-top:14px">/verify for the game</h3><p class="body">Write the skill. In Herdr, ask Claude with no skills and Claude with yours the same question, and watch their game windows as they play.</p></div>
+    </div>
+    <div style="width:380px"><div data-widget="timer" data-min="20" data-size="m" data-label="20-minute timer"></div></div>
+  </div>
+  <div class="race">
+    <div class="rp"><b>plain</b><i>Claude with no skills</i></div>
+    <div class="rp yours"><b>yours</b><i>Claude with your skills</i></div>
+    <div class="rp ask"><b>ask both</b><i>ask both › During wave 2, does the HUD …</i></div>
+    <div class="rp printer"><b>plays</b><i class="h2">yours  step 4/9 {"until": …}</i><i>played so far: <span class="h1">plain 0</span> <span class="h2">yours 3</span></i></div>
+  </div>
+  <div class="small" style="margin-top:-12px">With the Herdr app open, in the garden-guard repo: <span class="mono">node race.mjs</span>. Game windows open on each Claude’s side.</div>
+</section>
+
+<section class="slide" data-era="4" data-time="1:52">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> Then and now</div>
+  <h1>2025 H1: the agent moves into the terminal</h1>
+  <div class="tn">
+    <div class="tn-head"><span>Then</span><span></span><span>Now</span></div>
+    <div class="tn-row" data-step="1"><div class="then">Vibe coding: accept everything, hope it works</div><i>→</i><div class="now">Agentic engineering: tests, review, ownership</div></div>
+    <div class="tn-row" data-step="2"><div class="then">Start a message with # to save a memory</div><i>→</i><div class="now">Claude writes memories itself (Feb 2026)</div></div>
+    <div class="tn-row" data-step="3"><div class="then">Custom slash commands</div><i>→</i><div class="now">Skills, with commands merged in (Jan 2026)</div></div>
+  </div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> Lessons that still hold</div>
+  <h1>Lessons that still hold</h1>
+  <div class="lessons">
+    <div data-step="1"><span class="n">1</span><b>Give it a way to check its work.</b><p>Tests are the success signal. Without them the loop can’t tell it’s done.</p></div>
+    <div data-step="2"><span class="n">2</span><b>Write down only what isn’t obvious.</b><p>CLAUDE.md is in every request, so every line costs context.</p></div>
+    <div data-step="3"><span class="n">3</span><b>Learn the principle, not the trick.</b><p>The # memory shortcut lived nine months. The idea behind it is still here.</p></div>
+  </div>
+</section>
+
+
+<section class="slide" data-era="4">
+  <div class="kicker">The skeptic’s corner</div>
+  <h1>Four objections you might leave with</h1>
+  <div class="cols-2 objections" style="margin-top:12px">
+    <div class="flipc" data-cls="1:flipped"><div class="fi"><div class="ff">“I can’t review this much code.”</div><div class="fb"><small>“I can’t review this much code.”</small>You review intent and evidence, not lines. Session 2 builds the gates that make that safe.</div></div></div>
+    <div class="flipc" data-cls="2:flipped"><div class="fi"><div class="ff">“Juniors won’t learn the craft.”</div><div class="fb"><small>“Juniors won’t learn the craft.”</small>The craft matters more with agents: intermediate-or-above users reach verified success 28–33% of the time, novices 15%.</div></div></div>
+    <div class="flipc" data-cls="3:flipped"><div class="fi"><div class="ff">“It’s too expensive.”</div><div class="fb"><small>“It’s too expensive.”</small>Most tokens in a long session are cache reads at a tenth of the price. Session 2: cost per task.</div></div></div>
+    <div class="flipc" data-cls="4:flipped"><div class="fi"><div class="ff">“Security won’t allow it.”</div><div class="fb"><small>“Security won’t allow it.”</small>Enforcement and sandboxing, not trust. Next time.</div></div></div>
+  </div>
+  <div class="source">Expertise data: Anthropic, “Agentic coding and persistent returns to expertise”, Jun 2026; vendor-reported.</div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker">Monday moves</div>
+  <h1>Three things to do tomorrow</h1>
+  <div class="moves">
+    <div data-step="1"><span>1</span><span>When it acts weird, run <span class="mono">/context</span></span></div>
+    <div data-step="2"><span>2</span><span>Write a 10-line CLAUDE.md: only what isn’t obvious</span></div>
+    <div data-step="3"><span>3</span><span>Turn one weekly task into a skill</span></div>
+  </div>
+</section>
+
+<section class="slide" data-era="4" data-rail="off">
+  <div class="kicker">Close <span class="sep">/</span> Session 2</div>
+  <h1>Next time: practical. How the best teams work today.</h1>
+  <div class="cols-3" style="margin-top:22px">
+    <div class="card"><h3>Make it reliable</h3><p class="body">Hooks, enforcement, specs</p></div>
+    <div class="card"><h3>Many agents</h3><p class="body">Subagents, worktrees, workflows</p></div>
+    <div class="card"><h3>The bleeding edge</h3><p class="body">Cost, review by intent, what’s next</p></div>
+  </div>
+  <div class="monday" style="margin-top:auto"><span class="h">Homework</span><span>Ask Claude something you don’t think it can do.</span></div>
+</section>
+
+</div></div>
+
+<script src="vendor/cl100k_base.js"></script>
+<script src="vendor/o200k_base.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/lang-ka.js"></script>
+<script src="assets/i18n.js"></script>
+<script src="assets/deck.js"></script>
+<script src="assets/widgets-common.js"></script>
+<script src="assets/widgets-s1.js"></script>
+</body>
+</html>

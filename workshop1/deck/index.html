@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI in the SDLC · Deck</title>
+<link rel="stylesheet" href="assets/deck.css">
+<style>
+  body { overflow: auto; }
+  main { max-width: 1100px; margin: 0 auto; padding: 80px 48px; display: grid; gap: 40px; }
+  .sessions { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  a.card { text-decoration: none; color: inherit; display: block; transition: border-color 200ms, transform 200ms; }
+  a.card:hover { border-color: var(--cc); transform: translateY(-2px); }
+  table { border-collapse: collapse; font-size: 19px; }
+  td { padding: 6px 18px 6px 0; vertical-align: top; color: var(--ink-2); }
+  td:first-child { white-space: nowrap; }
+  kbd { font-family: var(--mono); background: #f0efec; border: 1px solid var(--hair); border-radius: 6px; padding: 1px 7px; color: var(--ink); }
+</style>
+</head>
+<body>
+<main>
+  <div>
+    <div class="kicker">AI in the SDLC · training deck</div>
+    <h1 style="margin-top:14px">Two sessions, one timeline</h1>
+    <p class="lead" style="margin-top:16px">From the artificial neuron to the bleeding edge, in 8 eras.</p>
+  </div>
+  <div class="sessions">
+    <a class="card" href="s1.html"><span class="tag">Session 1 · 120 min</span><h2 style="margin-top:14px">From the artificial neuron to the terminal agent</h2><p class="body" style="font-size:22px; margin-top:8px">The theory, eras 1–4: what an LLM is, tokens, training, context, the harness, MCP, Claude Code and skills. Workshop: write a skill.</p></a>
+  </div>
+  <p class="body" style="font-size:22px">ქართულად: <a href="s1.html?lang=ka">სესია 1</a></p>
+  <div>
+    <h3>Presenting</h3>
+    <table style="margin-top:12px">
+      <tr><td><kbd>P</kbd></td><td>Presenter view in a second window: next slide, elapsed time and drift against the planned block times. Share the audience window, keep this one for yourself.</td></tr>
+      <tr><td><kbd>→</kbd> <kbd>Space</kbd> <kbd>PgDn</kbd></td><td>Next step. Most slides reveal in steps; clickers work.</td></tr>
+      <tr><td><kbd>O</kbd> · <kbd>G</kbd></td><td>Overview of all slides · go to a slide number.</td></tr>
+      <tr><td><kbd>B</kbd> · <kbd>F</kbd> · <kbd>R</kbd></td><td>Black screen · full screen · replay the current slide’s animation.</td></tr>
+      <tr><td><kbd>T</kbd></td><td>Data table for the chart on the slide.</td></tr>
+      <tr><td><span class="mono">?script</span></td><td>URL flag: the per-slide script (what is on screen, what each click reveals), with a Copy button.</td></tr>
+      <tr><td><span class="mono">?lang=ka</span></td><td>URL flag: the slides in Georgian, from <span class="mono">assets/lang-ka.js</span>. <span class="mono">?lang=ka&amp;selftest=700</span> lists any text without a translation in <span class="mono">body[data-selftest]</span>.</td></tr>
+      <tr><td><span class="mono">?still</span></td><td>URL flag: every state without motion, for screenshots and handouts. Motion also stops when the OS asks for reduced motion.</td></tr>
+    </table>
+  </div>
+  <p class="small">Runs offline from the file system; no network, no API keys. Re-verify fast-moving facts a week before delivery. The tokenizer uses gpt-tokenizer (MIT, vendor/).</p>
+</main>
+</body>
+</html>

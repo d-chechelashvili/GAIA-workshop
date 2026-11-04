@@ -1,0 +1,11 @@
+{
+  "name": "garden-guard",
+  "private": true,
+  "description": "A small tower-defense game for the skills workshop. Plain JS, no build, no dependencies.",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "test": "node --test test/engine.test.js",
+    "play": "node play.mjs",
+    "doctor": "node doctor.mjs"
+  }
+}

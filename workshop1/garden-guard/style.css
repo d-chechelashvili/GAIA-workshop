@@ -1,0 +1,20 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #24331f; color: #f4f1e6; font: 16px/1.3 system-ui, sans-serif; }
+.game { display: flex; flex-direction: column; align-items: center; height: 100%; }
+.hud { display: flex; gap: 18px; align-items: center; height: 36px; padding: 0 12px; font-weight: 600; }
+.hud #banner { color: #ffd166; }
+/* The canvas keeps the garden's 3:2 shape and leaves room for the HUD and the build bar. */
+#garden { display: block; width: min(100vw, calc((100vh - 36px - 60px) * 1.5)); aspect-ratio: 3 / 2; image-rendering: auto; }
+.build { display: flex; gap: 8px; height: 60px; align-items: center; }
+.build button { font: inherit; padding: 8px 14px; border-radius: 10px; border: 2px solid #5c7a4e; background: #3a5230; color: inherit; cursor: pointer; }
+.build button.picked { border-color: #ffd166; }
+.build button:disabled { opacity: .45; cursor: default; }
+.build small { opacity: .75; margin-left: 4px; }
+/* Phones held sideways: a bigger garden, with the build bar along the bottom. */
+@media (max-height: 500px) {
+  #garden { width: min(100vw, calc((100vh - 36px) * 1.5)); }
+  .build { position: fixed; left: 0; right: 0; bottom: 0; justify-content: center; background: rgba(36, 51, 31, .92); }
+}
+#caption { position: fixed; top: 8px; right: 8px; max-width: 46vw; padding: 6px 10px; border-radius: 8px; background: rgba(0, 0, 0, .7); font: 13px/1.3 ui-monospace, monospace; }
+#caption[data-lane="plain"] { border-left: 4px solid #f3c58d; }
+#caption[data-lane="yours"] { border-left: 4px solid #9ec5f4; }

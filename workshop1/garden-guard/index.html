@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Garden Guard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="game">
+  <header class="hud"><b id="wave"></b><span id="lives"></span><span id="gold"></span><span id="banner"></span></header>
+  <canvas id="garden"></canvas>
+  <nav class="build">
+    <button data-tower="thorn">Thorn bush <small>50</small></button>
+    <button data-tower="sprinkler">Sprinkler <small>80</small></button>
+    <button id="start">Start wave</button>
+  </nav>
+</div>
+<div id="caption" hidden></div>
+<script src="game/engine.js"></script>
+<script src="game/render.js"></script>
+<script src="game/main.js"></script>
+</body>
+</html>
