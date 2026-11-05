@@ -1,4 +1,7 @@
 {
+  "env": {
+    "PLAY_WATCH": "1"
+  },
   "permissions": {
     "allow": [
       "Bash(node play.mjs:*)",
@@ -8,19 +11,22 @@
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
-      "Bash(git archive:*)",
-      "Bash(mkdir -p .verify/:*)",
-      "Bash(rm -rf .verify/base)",
-      "Bash(tar -x -C .verify/base)",
-      "Bash(node .verify/base/play.mjs:*)"
+      "Bash(git rev-parse:*)",
+      "Bash(node .claude/skills/verify/before.mjs:*)",
+      "Bash(node .claude/skills/verify/report.mjs:*)",
+      "Edit(./.verify/**)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git branch:*)",
+      "Bash(git merge:*)",
+      "Bash(git worktree:*)"
     ],
     "deny": [
       "Read(./WORKSHOP.md)",
       "Read(./WORKSHOP.ka.md)",
-      "Read(//**/solutions/**)",
+      "Read(//**/garden-guard/WORKSHOP*.md)",
       "WebFetch",
       "WebSearch"
-    ],
-    "blockReadsOutsideWorkingDirectories": true
+    ]
   }
 }

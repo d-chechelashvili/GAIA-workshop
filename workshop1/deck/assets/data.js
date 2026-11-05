@@ -74,6 +74,6 @@ window.DeckData = {
     [5, 'Hooks'], [5, 'Subagents'], [5, 'Agent SDK'], [5, 'Rewind'], [5, 'Skills'], [5, '/security-review'],
     [6, 'Sandbox'], [6, 'Background agents'], [6, 'Worktrees'], [6, 'Agent teams'], [6, 'Code Review'], [6, '/loop'], [6, 'Auto mode'],
     [7, 'ultracode'], [7, '/goal'], [7, 'Routines'], [7, 'Claude Tag'], [7, '/verify'], [7, 'Lean prompt −80%'], [7, 'Ultraplan', 7],
-    [7, '/doctor prompt‑audit'], [8, 'ultrathink = xhigh'],
+    [7, '/doctor prompt‑audit'], [8, 'Code Review GA'], [8, 'Claude Mods'], [8, 'Idle compaction'],
   ],
 };

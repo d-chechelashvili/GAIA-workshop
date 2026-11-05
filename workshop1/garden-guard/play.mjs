@@ -4,8 +4,8 @@
      node play.mjs <scenario.json> [--watch] [--out DIR]
 
    It drives the Chrome, Edge or Chromium already on this machine (CHROME=/path picks one) over
-   Chrome's own control pipe: no npm install, no network port. Headless by default; --watch, or a
-   LANE set by lane.mjs, opens a window you can watch, on that lane's side of the screen.
+   Chrome's own control pipe: no npm install, no network port. Headless by default; --watch, or
+   PLAY_WATCH=1 (set for Claude in .claude/settings.json), opens a window you can watch.
 
    A scenario: {"seed": 1, "viewport": "desktop" | "phone", "steps": [ ... ]}. "phone" is a phone
    held sideways, 844 x 390. Steps, in order:
@@ -19,19 +19,18 @@
      {"log": "text"}
    Events: tower_built, wave_started, enemy_spawned, boss_spawned, enemy_slowed, enemy_hit is not
    one (hits show as shots), enemy_defeated, enemy_leaked, wave_cleared, won, lost.
-   The view, printed after the run and on a failure: tick, phase, wave (waves started so far), lives,
-   gold, beetles (on the road), towers, boss ({hp, x, y} or null) and hud (the text the HUD shows).
+   The view, printed after the run, on a failure and with each screenshot: tick, phase, wave (waves
+   started so far), lives, gold, beetles (on the road), towers, boss ({hp, x, y} or null) and hud (the
+   text the HUD shows).
 
-   Screenshots go to <out>/<lane>/ (default out: .verify/shots). Every run is also logged to
-   .verify/plays.log (the race's feed pane), and .verify/gallery.html shows the newest screenshots of
-   each lane side by side. Exit code 1 on a failed step.
+   Screenshots go to <out>/<lane>/ (default out: .verify/shots; the lane is "plain" under plain.mjs,
+   else "you"), each with <name>.view.json, the view at that moment. Exit code 1 on a failed step.
 */
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { addShots, feed } from './gallery.mjs';
 import { findChrome } from './browser.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -39,11 +38,9 @@ const args = process.argv.slice(2);
 const file = args.find((a) => !a.startsWith('--') && args[args.indexOf(a) - 1] !== '--out');
 if (!file) { console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('*/')[0].slice(3)); process.exit(2); }
 const lane = process.env.LANE || 'you';
-const watch = args.includes('--watch') || !!process.env.LANE;
+const watch = args.includes('--watch') || process.env.PLAY_WATCH === '1';
 const outRoot = args.includes('--out') ? args[args.indexOf('--out') + 1] : path.join('.verify', 'shots');
 const scenario = JSON.parse(fs.readFileSync(file, 'utf8'));
-const shared = process.env.PLAY_PRIVATE !== '1'; // doctor's check stays out of the race's feed and gallery
-const log = (text) => shared && feed(lane, text);
 const VIEWPORTS = { desktop: { width: 680, height: 560, deviceScaleFactor: 1, mobile: false }, phone: { width: 844, height: 390, deviceScaleFactor: 2, mobile: true } };
 const vp = VIEWPORTS[scenario.viewport || 'desktop'];
 if (!vp) fail(`unknown viewport ${scenario.viewport}: use desktop or phone`);
@@ -55,7 +52,7 @@ class Browser {
     const exe = findChrome();
     if (!exe) fail('no Chrome, Edge or Chromium found; install one, or set CHROME=/path/to/it');
     const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'garden-guard-'));
-    const x = lane === 'yours' ? 720 : 20;
+    const x = 20;
     const flags = ['--remote-debugging-pipe', `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--disable-extensions', '--hide-scrollbars', '--disable-gpu-sandbox'];
     if (headed) flags.push(`--window-position=${x},40`, `--window-size=${vp.width + 20},${vp.height + 110}`, '--new-window');
     else flags.push('--headless=new');
@@ -172,11 +169,9 @@ async function main() {
       await drain();
     };
     const steps = scenario.steps || [];
-    log(`plays ${path.basename(file)}, ${steps.length} steps${watch ? '' : ' (headless)'}`);
     for (let i = 0; i < steps.length && !failed; i++) {
       const st = steps[i], label = `step ${i + 1}/${steps.length}`;
       if (watch) await page.eval(`__game.caption(${JSON.stringify(`${lane} · ${label}: ${JSON.stringify(st)}`)}, ${JSON.stringify(lane)})`);
-      log(`  ${label}: ${JSON.stringify(st)}`);
       if (st.log) say(`-- ${st.log}`);
       else if (st.build) {
         const r = await page.eval(`__game.build(${JSON.stringify(st.build)}, ${st.at[0]}, ${st.at[1]})`);
@@ -207,15 +202,15 @@ async function main() {
         fs.mkdirSync(dir, { recursive: true });
         const where = path.join(dir, st.screenshot);
         fs.writeFileSync(where, Buffer.from(shot.data, 'base64'));
-        say(`screenshot ${where} at tick ${(await page.eval('__game.view()')).tick}`);
-        if (shared) addShots(lane, dir, file);
+        const seen = await page.eval('__game.view()');
+        fs.writeFileSync(where.replace(/\.png$/i, '') + '.view.json', JSON.stringify(seen)); // the state at that moment, for the report
+        say(`screenshot ${where} view ${JSON.stringify(seen)}`);
         if (watch) await sleep(400);
       } else failed = `${label}: unknown step ${JSON.stringify(st)}`;
     }
     const view = await page.eval('__game.view()');
     say(`view ${JSON.stringify(view)}`);
     say(failed ? `FAIL ${failed}` : `OK ${path.basename(file)}: ${view.tick} ticks, phase ${view.phase}`);
-    log(failed ? `  FAIL ${failed}` : `  OK at tick ${view.tick}: ${view.hud}`);
     if (watch) { await page.eval(`__game.caption(${JSON.stringify(`${lane} · ${failed ? 'FAIL' : 'done'}`)}, ${JSON.stringify(lane)})`); await sleep(2500); }
   } finally {
     browser.close();

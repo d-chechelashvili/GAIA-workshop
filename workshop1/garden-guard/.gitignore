@@ -1,2 +1,4 @@
 .verify/
 node_modules/
+# where Claude Code puts its worktrees: other checkouts, never part of this one
+.claude/worktrees/

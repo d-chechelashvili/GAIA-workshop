@@ -1,4 +1,4 @@
-/* Widgets used by both sessions: count-up numbers, countdown timers, the three lanes. */
+/* Widgets used by both sessions: count-up numbers, countdown timers, how skills load, the three lanes. */
 (function () {
   const W = window.Widgets, U = window.U;
 
@@ -42,6 +42,28 @@
       enter() { left = total; draw(); t = setInterval(() => { if (!paused && left > 0) { left--; draw(); } }, 1000); },
       leave() { clearInterval(t); },
     };
+  };
+
+  // Skills: only a one-line description sits in the context; the full instructions load when a task needs them.
+  const box = (style, ...kids) => U.el('div', { style }, ...kids);
+  W.skillload = (node) => {
+    const bar = box({ display: 'flex', gap: '3px', height: '64px', borderRadius: '12px', overflow: 'hidden', background: '#efeee9' });
+    const seg = (w, c, l) => U.el('div', { style: { width: w + '%', background: c, color: '#fff', fontSize: '18px', fontWeight: 650, display: 'grid', placeItems: 'center', whiteSpace: 'nowrap', overflow: 'hidden', transition: 'width 800ms var(--ease)' } }, l);
+    const sys = seg(14, '#2a78d6', 'system + tools'), conv = seg(22, '#008300', 'conversation'), desc = seg(0, '#eda100', ''), body = seg(0, '#6250d6', '');
+    bar.append(sys, conv, desc, body);
+    const list = box({ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginTop: '28px' });
+    const skills = ['release-notes: write release notes from merged PRs', 'db-migration: plan a safe schema migration', 'review: review a diff for bugs', 'incident: draft an incident summary', 'perf: profile a slow endpoint', 'onboarding: explain a module to a newcomer'];
+    const chips = skills.map((t) => { const [n, d] = t.split(': '); const c = box({ padding: '10px 14px', borderRadius: '12px', border: '1px solid var(--hair)', background: 'var(--card)', fontSize: '20px', opacity: 0, transition: 'opacity 400ms, border-color 400ms' }, U.el('b', { class: 'mono', style: { fontSize: '19px' } }, n), U.el('div', { style: { color: 'var(--ink-2)', marginTop: '2px' } }, d)); list.append(c); return c; });
+    const msg = U.el('div', { style: { fontSize: '26px', fontWeight: 600, marginTop: '24px', minHeight: '40px' } });
+    node.append(U.el('div', { class: 'small', style: { marginBottom: '10px' } }, 'the context window'), bar, list, msg);
+    function set(s) {
+      desc.style.width = s >= 1 ? '6%' : '0%'; desc.textContent = s >= 1 ? 'skill lines' : '';
+      chips.forEach((c, i) => { c.style.opacity = s >= 1 ? 1 : 0; c.style.transitionDelay = s >= 1 ? i * 80 + 'ms' : '0ms'; c.style.borderColor = s >= 3 && i === 0 ? '#6250d6' : 'var(--hair)'; });
+      body.style.width = s >= 3 ? '18%' : '0%'; body.textContent = s >= 3 ? 'release-notes, in full' : '';
+      msg.textContent = s === 1 ? 'Only each skill’s name and one-line description is always in the context.' : s === 2 ? 'You ask: “write the release notes for 2.3”.' : s >= 3 ? 'The matching skill loads in full, only now, only that one.' : '';
+    }
+    set(0);
+    return { beats: ['the descriptions: always loaded, tiny', 'a task arrives', 'the one matching skill loads in full'], steps: 3, step: set };
   };
 
   // The Claude Code lane strip for one era, on its title card.

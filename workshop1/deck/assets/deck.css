@@ -568,12 +568,3 @@ img.shot { display: block; width: 100%; border-radius: 12px; box-shadow: 0 0 0 1
 .whoami-why .card { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; padding: 24px 28px; }
 .whoami-why .body { font-size: 27px; line-height: 1.3; font-weight: 550; }
 @media (prefers-reduced-motion: reduce) { .slide.active .whoami img, .slide.active .whoami .at { animation: none; } }
-
-/* Georgian (?lang=ka): the script has no capitals, so the uppercase labels drop their wide tracking. */
-html:lang(ka) { --sans: system-ui, -apple-system, "Segoe UI", "Noto Sans Georgian", Sylfaen, sans-serif; }
-:lang(ka) :is(.tag, .kicker, .ask .label, .era-card .num, .era-card .fact .h, .breather .badge, .monday .h, .rail .sess, .illus, .ex-card h3, .tn-head span, .holds .h, .map-head span, .recap span, .fs-h, .race b, .needs-edit) { letter-spacing: .01em; }
-:lang(ka) .breather .lesson::before { letter-spacing: .01em; }
-/* Georgian letters run wider than Latin ones: a notch smaller keeps headlines on the lines the layouts expect. */
-:lang(ka) :where(h1) { font-size: 54px; }
-:lang(ka) h1.xl { font-size: 82px; }
-:lang(ka) h1.xxl { font-size: 104px; }

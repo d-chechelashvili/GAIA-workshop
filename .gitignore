@@ -1,5 +1,7 @@
 .DS_Store
+# The trace recorder's output holds your CLAUDE.md files, skills and account email: never commit it.
+workshop1/trace-recorder/trace-*.jsonl
+workshop1/trace-recorder/explained/
+__pycache__/
+# Local Claude Code settings (ccm writes one per repo root): never part of the repo.
 **/.claude/settings.local.json
-trace-*.jsonl
-explained/
-node_modules/

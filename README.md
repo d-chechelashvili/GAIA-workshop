@@ -7,29 +7,40 @@ Materials for a training on AI-assisted software development with Claude Code, b
 
 | Folder | What it is |
 |---|---|
-| `workshop1/deck/` | The slides. Open `workshop1/deck/s1.html` in a browser; it runs offline. `?lang=ka` shows them in Georgian. |
-| `workshop1/garden-guard/` | The skills workshop: a small tower-defense game, and a race between Claude with and without the skill you write. Steps in `WORKSHOP.md` (Georgian: `WORKSHOP.ka.md`). |
-| `workshop1/solutions/verify/` | A reference `/verify` skill for the workshop. Try writing your own first. |
+| `check.sh`, `check.ps1` | Checks your machine before anything else and says how to install what's missing. |
+| `workshop1/deck/` | The slides. Open `workshop1/deck/s1.html` in a browser; it runs offline. |
+| `workshop1/garden-guard/` | Both workshops, on a small tower-defense game: Claude without and with the game's `/verify` skill, which then proves Claude's own fix, then a new feature built by several agents at once and proven with that skill. Steps in `WORKSHOP.md` (Georgian: `WORKSHOP.ka.md`). |
+| `workshop1/setup.mjs` | Sets up the game for the workshops: `node GAIA-workshop/workshop1/setup.mjs`. |
 | `workshop1/pick-a-number.sh` | Asks Claude for a number from 1 to 10, 20 times at once, and prints each answer as it arrives. |
 | `workshop1/trace-recorder/` | Records exactly what Claude Code sends to the model and what comes back, for the "what does my agent actually send" demo. |
 
-### The skills workshop
+### The workshops
 
-You need Node 18+, Chrome (or Edge or Chromium), Claude Code and git 2.25+. Get only the game, as a
-git repo of its own, then check your machine:
+You need Node 18+, git, Claude Code and Chrome (or Edge or Chromium). First check your machine. The
+check needs nothing installed, installs nothing, and prints the command for anything that's missing:
 
-    git clone --depth 1 --sparse https://github.com/d-chechelashvili/GAIA-workshop
-    cd GAIA-workshop && git sparse-checkout set workshop1/garden-guard && cd ..
-    cp -R GAIA-workshop/workshop1/garden-guard garden-guard
+    curl -fsSL https://raw.githubusercontent.com/d-chechelashvili/GAIA-workshop/main/check.sh | sh   # macOS, Linux
+    irm https://raw.githubusercontent.com/d-chechelashvili/GAIA-workshop/main/check.ps1 | iex        # Windows PowerShell
+
+When it says `ready`, two commands set up the game and check it again:
+
+    git clone --depth 1 https://github.com/d-chechelashvili/GAIA-workshop
+    node GAIA-workshop/workshop1/setup.mjs
+
+Not used to git? On this page, press **Code → Download ZIP**, unzip it, and run
+`node GAIA-workshop-main/workshop1/setup.mjs` from the folder you unzipped it in.
+
+The script copies the game to `garden-guard/`, next to the repo's folder, as a git repo of its own,
+then says what to fix, if anything. When it prints `ready`:
+
     cd garden-guard
-    git init -q && git add -A && git commit -qm start
-    node doctor.mjs        # it says what to fix; run it again until it prints "ready"
+    claude          # choose "Yes, I trust this folder", then type /exit
 
-On Windows, copy with `Copy-Item -Recurse GAIA-workshop/workshop1/garden-guard garden-guard`.
+Run the script again any time: once the game is set up, it only checks your machine. The steps for
+both workshops are in `garden-guard/WORKSHOP.md`.
 
-The workshop's Claudes can't read the solution, the guide or anything outside the game's folder,
-and can't browse the web (see `garden-guard/.claude/settings.json`). The sparse clone also keeps the
-solution off your disk: if you want it, read it here on GitHub.
+The workshop's Claudes can't read the guide and can't browse the web (see
+`garden-guard/.claude/settings.json`). `node plain.mjs` starts a Claude that can't read or use skills.
 
 ### The trace recorder
 

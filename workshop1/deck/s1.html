@@ -140,9 +140,9 @@
   <div class="kicker"><span class="dot"></span>Era 1 · ChatGPT <span class="sep">/</span> Tokens</div>
   <h1>It doesn’t see letters or words. It sees tokens.</h1>
   <div class="cols-3" style="margin-top:26px">
-    <div class="card" data-step="1"><span class="tag">Letters</span><div class="tokrow" translate="no"><i>u</i><i>n</i><i>b</i><i>e</i><i>l</i><i>i</i><i>e</i><i>v</i><i>a</i><i>b</i><i>l</i><i>e</i></div><p class="body">12 pieces for one word. Sequences get long, and cost grows with length.</p></div>
-    <div class="card" data-step="2"><span class="tag">Words</span><div class="tokrow" translate="no"><i>unbelievable</i></div><p class="body">1 piece, but millions of words, typos and new names: an endless vocabulary.</p></div>
-    <div class="card" data-step="3" style="border-color:var(--cc)"><span class="tag" style="color:var(--cc-550)">Tokens</span><div class="tokrow" translate="no"><i class="on">un</i><i class="on">believ</i><i class="on">able</i></div><p class="body">3 common chunks. A vocabulary of 100,000–200,000 pieces covers any text.</p></div>
+    <div class="card" data-step="1"><span class="tag">Letters</span><div class="tokrow"><i>u</i><i>n</i><i>b</i><i>e</i><i>l</i><i>i</i><i>e</i><i>v</i><i>a</i><i>b</i><i>l</i><i>e</i></div><p class="body">12 pieces for one word. Sequences get long, and cost grows with length.</p></div>
+    <div class="card" data-step="2"><span class="tag">Words</span><div class="tokrow"><i>unbelievable</i></div><p class="body">1 piece, but millions of words, typos and new names: an endless vocabulary.</p></div>
+    <div class="card" data-step="3" style="border-color:var(--cc)"><span class="tag" style="color:var(--cc-550)">Tokens</span><div class="tokrow"><i class="on">un</i><i class="on">believ</i><i class="on">able</i></div><p class="body">3 common chunks. A vocabulary of 100,000–200,000 pieces covers any text.</p></div>
   </div>
   <p class="lead" data-step="4" style="margin-top:24px">Tokens are the unit of everything: the input, the output, the context window, and the bill.</p>
 </section>
@@ -561,7 +561,7 @@ name: release-notes
 <section class="slide" data-era="4" data-time="1:32">
   <div class="kicker">Workshop · Set up</div>
   <h1>First, get the game running</h1>
-  <div class="moves sm" style="margin-top:40px"><div><span>1</span><span>Node 18+, Chrome or Edge, and the Herdr app: <span class="mono">curl -fsSL https://releases.herdr.dev/app/install.sh | sh</span></span></div><div><span>2</span><span>Get the garden-guard repo; <span class="mono">node doctor.mjs</span> until ready</span></div><div><span>3</span><span>Run <span class="mono">claude</span> there once: “Yes, I trust this folder”</span></div></div>
+  <div class="moves sm" style="margin-top:40px"><div><span>1</span><span>Node 18+, Chrome or Edge, and git. Optional: the Herdr app, for the race side by side</span></div><div><span>2</span><span class="mono">git clone --depth 1 https://github.com/d-chechelashvili/GAIA-workshop</span></div><div><span>3</span><span><span class="mono">node GAIA-workshop/workshop1/setup.mjs</span>, until it says ready</span></div><div><span>4</span><span><span class="mono">cd garden-guard</span>, then <span class="mono">claude</span> once: “Yes, I trust this folder”</span></div></div>
 </section>
 
 <section class="slide" data-era="4">
@@ -643,8 +643,6 @@ name: release-notes
 <script src="vendor/cl100k_base.js"></script>
 <script src="vendor/o200k_base.js"></script>
 <script src="assets/data.js"></script>
-<script src="assets/lang-ka.js"></script>
-<script src="assets/i18n.js"></script>
 <script src="assets/deck.js"></script>
 <script src="assets/widgets-common.js"></script>
 <script src="assets/widgets-s1.js"></script>

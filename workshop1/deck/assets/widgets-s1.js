@@ -149,13 +149,13 @@
       [[' null', .52], [' undefined', .20], [' an', .12], [' the', .09], [' stale', .07]],
     ];
     let T = 1, pos = 0, out = [];
-    const text = U.el('div', { class: 'mono', translate: 'no', style: { fontSize: '44px', lineHeight: 1.3, minHeight: '64px' } });
+    const text = U.el('div', { class: 'mono', style: { fontSize: '44px', lineHeight: 1.3, minHeight: '64px' } });
     const bars = U.el('div', { style: { display: 'grid', gap: '14px', marginTop: '34px' } });
     const ctrl = U.el('div', { class: 'row', style: { marginTop: '30px', gap: '22px', fontSize: '22px', color: 'var(--ink-2)' } });
     const slider = U.el('input', { type: 'range', min: '0.05', max: '2', step: '0.05', value: '1', style: { width: '320px', accentColor: 'var(--cc)' } });
     const tval = U.el('b', {}, '1.00');
     const sample = U.el('button', { class: 'pill-btn' }, 'Sample 10×');
-    const samples = U.el('div', { class: 'mono', translate: 'no', style: { fontSize: '22px', color: 'var(--ink-2)' } });
+    const samples = U.el('div', { class: 'mono', style: { fontSize: '22px', color: 'var(--ink-2)' } });
     ctrl.append(U.el('span', {}, 'Temperature'), slider, tval, sample, samples);
     node.append(text, bars, ctrl, U.el('div', { class: 'illus' }, 'illustrative probabilities'));
 
@@ -174,7 +174,7 @@
       else text.append('.');
     };
     const rows = plan[0].map(() => {
-      const lab = U.el('div', { class: 'mono', translate: 'no', style: { width: '200px', fontSize: '28px', textAlign: 'right' } });
+      const lab = U.el('div', { class: 'mono', style: { width: '200px', fontSize: '28px', textAlign: 'right' } });
       const bar = U.el('div', { style: { height: '24px', borderRadius: '0 4px 4px 0', background: 'var(--cc)', width: '0px', transition: 'width 450ms var(--ease)' } });
       const val = U.el('div', { style: { fontSize: '22px', color: 'var(--ink-2)', fontVariantNumeric: 'tabular-nums', width: '70px' } });
       const r = U.el('div', { style: { display: 'grid', gridTemplateColumns: '200px 1fr', gap: '18px', alignItems: 'center' } }, lab,
@@ -217,7 +217,7 @@
     };
     let which = 'cl100k', cur = 'English';
     const input = U.el('textarea', { spellcheck: 'false', style: { width: '100%', height: '96px', font: '34px var(--sans)', border: '1px solid var(--hair)', borderRadius: '14px', padding: '14px 18px', resize: 'none', background: 'var(--card)', color: 'var(--ink)' } });
-    const chips = U.el('div', { translate: 'no', style: { display: 'flex', flexWrap: 'wrap', gap: '6px 4px', marginTop: '22px', minHeight: '150px', alignContent: 'flex-start', fontSize: '30px' } });
+    const chips = U.el('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '6px 4px', marginTop: '22px', minHeight: '150px', alignContent: 'flex-start', fontSize: '30px' } });
     const count = U.el('div', { style: { fontSize: '120px', fontWeight: 650, letterSpacing: '-0.04em', lineHeight: 1, fontVariantNumeric: 'tabular-nums' } }, '0');
     const sub = U.el('div', { style: { fontSize: '24px', color: 'var(--ink-2)', marginTop: '8px' } });
     const ratio = U.el('div', { style: { fontSize: '28px', fontWeight: 650, marginTop: '18px', minHeight: '36px' } });
@@ -324,7 +324,7 @@
     const wts = [0.05, 0.5, 0.25, 0.08, 0.05, 1, 0.8, 0.3]; // illustrative weights from "null"
     const n = toks.length, Wd = 1400, H = 300, gapX = Wd / n;
     const svg = S('svg', { viewBox: `0 0 ${Wd} ${H}`, width: Wd, height: H, style: 'overflow:visible' });
-    const gArc = S('g'), gTok = S('g', { translate: 'no' });
+    const gArc = S('g'), gTok = S('g');
     svg.append(gArc, gTok);
     const boxes = toks.map((t, i) => {
       const cx = gapX * (i + 0.5);
@@ -725,14 +725,14 @@
 
   // An LLM is a function: text in, a distribution over the next token out. Then it runs in a loop.
   W.llmfn = (node) => {
-    const input = U.el('div', { class: 'mono', translate: 'no', style: { fontSize: '34px', lineHeight: 1.35, padding: '22px 26px', border: '2px solid var(--ink)', borderRadius: '16px', background: 'var(--card)', minHeight: '128px' } });
+    const input = U.el('div', { class: 'mono', style: { fontSize: '34px', lineHeight: 1.35, padding: '22px 26px', border: '2px solid var(--ink)', borderRadius: '16px', background: 'var(--card)', minHeight: '128px' } });
     const fbox = U.el('div', { style: { width: '220px', height: '150px', borderRadius: '22px', background: 'var(--ink)', color: '#fff', display: 'grid', placeItems: 'center', textAlign: 'center', fontSize: '30px', fontWeight: 700, lineHeight: 1.2, transition: 'transform 500ms var(--ease)' } }, U.el('div', {}, 'LLM', U.el('div', { class: 'mono', style: { fontSize: '22px', fontWeight: 400, color: '#c3c2b7', marginTop: '6px' } }, 'f(text)')));
     const arrowIn = U.el('div', { style: { fontSize: '50px', color: 'var(--axis)' } }, '→'), arrowOut = U.el('div', { style: { fontSize: '50px', color: 'var(--axis)' } }, '→');
     const dist = U.el('div', { style: { display: 'grid', gap: '10px', width: '400px' } });
     const opts = [[' Tbilisi', 0.93], [' a', 0.03], [' the', 0.02], [' located', 0.01]];
     const rows = opts.map(([t, p]) => {
       const bar = U.el('div', { style: { height: '24px', width: '0px', background: 'var(--cc)', borderRadius: '0 4px 4px 0', transition: 'width 700ms var(--ease)' } });
-      const r = box({ display: 'grid', gridTemplateColumns: '150px 1fr 60px', alignItems: 'center', gap: '12px', fontSize: '26px' }, U.el('span', { class: 'mono', translate: 'no' }, t.replace(' ', '␣')), bar, U.el('span', { style: { color: 'var(--ink-2)', fontSize: '22px' } }, Math.round(p * 100) + '%'));
+      const r = box({ display: 'grid', gridTemplateColumns: '150px 1fr 60px', alignItems: 'center', gap: '12px', fontSize: '26px' }, U.el('span', { class: 'mono' }, t.replace(' ', '␣')), bar, U.el('span', { style: { color: 'var(--ink-2)', fontSize: '22px' } }, Math.round(p * 100) + '%'));
       dist.append(r); return { bar, p };
     });
     const loop = U.el('div', { style: { fontSize: '28px', color: 'var(--cc-550)', fontWeight: 650, minHeight: '40px', marginTop: '26px', textAlign: 'center' } });
@@ -781,13 +781,13 @@
       if (s >= 4) { segs = words.map((w) => [w]); last = null; msg = [U.el('b', {}, `${total(segs)} tokens. `), 'Repeat until the vocabulary is full, about 100,000–200,000 pieces. Common words become one token; rare text stays in small pieces.']; }
       if (!msg) msg = [U.el('b', {}, `${total(segs)} tokens. `), 'Start with one token per character.'];
       row.innerHTML = '';
-      segs.forEach((w) => row.append(box({ display: 'flex', gap: '4px' }, ...w.map((x) => U.el('span', { translate: 'no', style: chipCss(x === last) }, x)))));
+      segs.forEach((w) => row.append(box({ display: 'flex', gap: '4px' }, ...w.map((x) => U.el('span', { style: chipCss(x === last) }, x)))));
       status.innerHTML = ''; status.append(...msg);
       ka.style.opacity = s >= 5 ? 1 : 0;
       ka.innerHTML = '';
       if (s >= 5) {
         ka.append(U.el('div', { style: { fontSize: '26px', marginBottom: '12px' } }, U.el('b', {}, 'Georgian “hello”: '), 'rare in the text the 2023 tokenizer learned from, so few Georgian pairs ever won a merge. Each letter is 3 bytes.'),
-          box({ display: 'flex', gap: '6px', flexWrap: 'wrap' }, ...[...kaWord].map((ch) => U.el('span', { translate: 'no', style: chipCss(false) }, ch, U.el('sup', { style: { fontSize: '16px', fontWeight: 700, color: 'var(--ink-2)', marginLeft: '3px' } }, '×2')))),
+          box({ display: 'flex', gap: '6px', flexWrap: 'wrap' }, ...[...kaWord].map((ch) => U.el('span', { style: chipCss(false) }, ch, U.el('sup', { style: { fontSize: '16px', fontWeight: 700, color: 'var(--ink-2)', marginLeft: '3px' } }, '×2')))),
           U.el('div', { class: 'small', style: { marginTop: '10px' } }, 'About 2 tokens per letter in the 2023 tokenizer (schematic).'));
       }
     }
@@ -991,26 +991,5 @@
       gHub.style.transition = 'opacity 600ms'; gHub.setAttribute('opacity', s >= 2 ? 1 : 0);
       count.textContent = s === 1 ? '3 agents × 4 tools = 12 custom integrations, each built and maintained separately.' : s >= 2 ? '3 + 4 = 7. Each tool is wrapped once as an MCP server; any agent can use it.' : '';
     } };
-  };
-
-  // Skills: only a one-line description sits in the context; the full instructions load when a task needs them.
-  W.skillload = (node) => {
-    const bar = box({ display: 'flex', gap: '3px', height: '64px', borderRadius: '12px', overflow: 'hidden', background: '#efeee9' });
-    const seg = (w, c, l) => U.el('div', { style: { width: w + '%', background: c, color: '#fff', fontSize: '18px', fontWeight: 650, display: 'grid', placeItems: 'center', whiteSpace: 'nowrap', overflow: 'hidden', transition: 'width 800ms var(--ease)' } }, l);
-    const sys = seg(14, '#2a78d6', 'system + tools'), conv = seg(22, '#008300', 'conversation'), desc = seg(0, '#eda100', ''), body = seg(0, '#6250d6', '');
-    bar.append(sys, conv, desc, body);
-    const list = box({ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginTop: '28px' });
-    const skills = ['release-notes: write release notes from merged PRs', 'db-migration: plan a safe schema migration', 'review: review a diff for bugs', 'incident: draft an incident summary', 'perf: profile a slow endpoint', 'onboarding: explain a module to a newcomer'];
-    const chips = skills.map((t) => { const [n, d] = t.split(': '); const c = box({ padding: '10px 14px', borderRadius: '12px', border: '1px solid var(--hair)', background: 'var(--card)', fontSize: '20px', opacity: 0, transition: 'opacity 400ms, border-color 400ms' }, U.el('b', { class: 'mono', style: { fontSize: '19px' } }, n), U.el('div', { style: { color: 'var(--ink-2)', marginTop: '2px' } }, d)); list.append(c); return c; });
-    const msg = U.el('div', { style: { fontSize: '26px', fontWeight: 600, marginTop: '24px', minHeight: '40px' } });
-    node.append(U.el('div', { class: 'small', style: { marginBottom: '10px' } }, 'the context window'), bar, list, msg);
-    function set(s) {
-      desc.style.width = s >= 1 ? '6%' : '0%'; desc.textContent = s >= 1 ? 'skill lines' : '';
-      chips.forEach((c, i) => { c.style.opacity = s >= 1 ? 1 : 0; c.style.transitionDelay = s >= 1 ? i * 80 + 'ms' : '0ms'; c.style.borderColor = s >= 3 && i === 0 ? '#6250d6' : 'var(--hair)'; });
-      body.style.width = s >= 3 ? '18%' : '0%'; body.textContent = s >= 3 ? 'release-notes, in full' : '';
-      msg.textContent = s === 1 ? 'Only each skill’s name and one-line description is always in the context.' : s === 2 ? 'You ask: “write the release notes for 2.3”.' : s >= 3 ? 'The matching skill loads in full, only now, only that one.' : '';
-    }
-    set(0);
-    return { beats: ['the descriptions: always loaded, tiny', 'a task arrives', 'the one matching skill loads in full'], steps: 3, step: set };
   };
 })();

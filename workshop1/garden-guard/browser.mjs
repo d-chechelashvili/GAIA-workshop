@@ -1,5 +1,5 @@
 /* The Chrome, Edge or Chromium already on this machine (CHROME=/path picks one): play.mjs drives it,
-   and the race opens the screenshot gallery in it rather than in the default browser. */
+   and /verify opens its report in it rather than in the default browser. */
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';

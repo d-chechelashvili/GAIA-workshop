@@ -1,112 +1,106 @@
-# Skills workshop: race Claude with and without your skill
+# Skills workshop: verify by playing
 
-Two Claudes get the same question about the game, side by side: one with no skills, one with the
-`/verify` skill you write. The Herdr app lays it out: both Claudes, a pane that asks both at once, and
-a feed of everything each one plays. Whenever either one plays the game, its browser window opens on
-its side of the screen (plain on the left, yours on the right) with a caption saying which step it is
-playing, and `.verify/gallery.html` collects every screenshot each of them took.
+The game comes with a `/verify` skill: it answers questions about the game by playing it in a real
+browser, then opens a report of what it saw. You'll ask Claude the same question without the skill
+and with it, then have Claude fix the bug, prove the fix with the skill, and commit it.
 
 ## Before you start
 
 1. Node 18 or newer, and Chrome, Edge or Chromium.
-2. The Herdr app: `curl -fsSL https://releases.herdr.dev/app/install.sh | sh` on macOS or Linux
-   (it puts `herdr-app` and `hc` in `~/.local/bin`, which must be on your PATH), or
-   `powershell -c "irm https://releases.herdr.dev/app/install.ps1 | iex"` on Windows.
-3. In this folder: `node doctor.mjs`, until it prints `ready`.
-4. Run `claude` once here and choose **Yes, I trust this folder**. The default answer is No, because
+2. In this folder: `node doctor.mjs`, until it prints `ready`.
+3. Run `claude` once here and choose **Yes, I trust this folder**. The default answer is No, because
    this repo pre-approves the game's commands. Then `/exit`.
 
 ## Play it first
 
 Open `index.html` in Chrome. Plant a few thorn bushes and sprinklers, start a wave or two, and watch
-the screen. You'll judge what each Claude says it saw, so know the game first.
+the screen. You'll judge what Claude says it saw, so know the game first.
 
-## Write /verify, then race it
+## Without /verify, then with it
 
-1. **Open the race.** Open the Herdr app and make its window large. Then, in this folder:
+1. **Ask Claude without skills.** In this folder:
 
-       node race.mjs
+       node plain.mjs
 
-   Herdr opens a space called "garden race", and the gallery opens in Chrome (or Edge, Chromium):
-
-       ┌─ plain ─────────────────────┬─ yours ─────────────────────┐
-       │ Claude with no skills       │ Claude with your skills     │
-       ├─ ask both ──────────────────┼─ plays ─────────────────────┤
-       │ ask both › your question    │ yours  step 4/9 {"until"…   │
-       │                             │ played so far: plain 0 …    │
-       └─────────────────────────────┴─────────────────────────────┘
-
-   "plain" can't use, read or run skills, so it works as it would in a repo
-   without your skill. A question typed in "ask both" goes to "plain" as typed and to "yours" as
-   `/verify <question>`; `/clear` clears both.
-
-2. **Write `.claude/skills/verify/SKILL.md`.** Use your editor, or ask the "yours" Claude to draft it
-   from your bullet points (then `/clear` it). Start from this:
-
-       ---
-       name: verify
-       description: <when to use it, in the words someone would type>
-       argument-hint: "[question or change]"
-       ---
-
-       # Verify by playing
-
-       $ARGUMENTS
-
-       <what counts as evidence here, and what doesn't>
-
-       ## 1. Pin the question
-       ## 2. Play it
-       ## 3. Look
-       ## 4. Before and after, for a change
-       ## 5. Answer
-       ## Rules
-
-   At the least, it should say:
-   - Play it with `node play.mjs <scenario>`, with a screenshot at the moment that matters, and never
-     answer a question about the screen from the code alone.
-   - Look at each screenshot and say what a player would see before reading how it's drawn.
-   - Put the picture next to the state `play.mjs` printed: when they disagree, the picture wins.
-   - Quote the lines and screenshots that prove each point. Observe only: don't fix anything.
-
-   Type `/` in the "yours" pane and check that `/verify` shows as (project). If not, `/reload-skills`.
-
-   Stuck? A reference skill is on GitHub, in the workshop repo, at `workshop1/solutions/verify/SKILL.md`:
-   https://github.com/d-chechelashvili/GAIA-workshop/blob/main/workshop1/solutions/verify/SKILL.md
-   Write your own first: you'll learn more from what yours misses.
-
-3. **Race 1.** In "ask both":
+   This is Claude with skills switched off: it can't use, read or run them, as in a repo without
+   your skill. Ask:
 
        During wave 2, does the HUD show the right wave number?
 
-   Watch the game windows and the plays feed: which Claude plays the game, and what does it look at?
-   The gallery shows their screenshots side by side. Then compare the answers: which one shows you a
-   screenshot? Which one reads code, or offers to change it?
+   Read its answer. Did it play the game or read the code? Did it show you anything? Did it offer to
+   change the code? Then `/exit`.
 
-   "plain" may well play the game too: it can read `play.mjs` like anyone. Look past who played:
-   how many moments did each one check, does it compare the picture with the state, and does it
-   leave the code alone?
+2. **Read the skill: `.claude/skills/verify/SKILL.md`.** It comes with the game. Look at two things:
+   - The `description`: the only part that's always in Claude's context, so it decides when the
+     skill is used at all.
+   - The steps: play it with `node play.mjs`, take a screenshot at the moment that matters, say what
+     a player would see before reading how it's drawn, put the picture next to the game's state
+     (when they disagree, the picture wins), show it all on one page, and don't fix anything.
 
-4. **Race 2.** Tighten your skill where "yours" fell short, type `/clear` in "ask both", and race again:
+3. **Ask with /verify.** Start `claude`, type `/` and check that `/verify` shows as (project). Then:
 
-       Can you play this on a phone held sideways?
+       /verify During wave 2, does the HUD show the right wave number?
 
-5. **Race 3: did my change work?** Fix the HUD yourself, in your editor: in `game/main.js`, the
-   wave text should show `s.wave` while a wave runs and `s.wave + 1` between waves. Don't commit it.
-   `/clear` both, then:
+   A game window opens and you watch it play. At the end, its report opens in the browser: the
+   verdict, each screenshot with what's on screen next to the game's state, and a strip of the
+   game's moments, from before wave 1 to after the last. The striped ones are moments it never
+   looked at.
 
-       I changed the HUD's wave number. Did my change work?
+## Fix it, prove it, commit it
 
-   Compare what each one checked. In rehearsal, "plain" reasoned from the diff and "yours" showed
-   before-and-after screenshots of the same moment, but each one checked different states of the
-   game. If one of them finds a case the other missed, that's the next line for your skill.
+4. **Ask Claude to fix it.** In the same `claude` session:
 
-6. **Commit the skill:** `git add .claude/skills && git commit -m "verify skill"`.
+       Fix the HUD so it shows the right wave number.
 
-## No Herdr?
+   Let it edit `game/main.js`.
 
-Two terminals in this folder, side by side, and type each question into both (start it with
-`/verify ` in "yours"):
+5. **Check it with fresh eyes.** `/clear`, so the Claude that checks hasn't seen why the fix was
+   made, only the change and the game. Then:
 
-    node lane.mjs plain        # Claude with no skills
-    node lane.mjs yours        # Claude with your skills
+       /verify Did your change work?
+
+   It plays the game as it was at your last commit and again with the change, and the report puts
+   them side by side, for every moment of the game. Is every moment green? If one isn't, the fix
+   missed a case, and you saw it without reading the code.
+
+6. **Ask Claude to commit it:**
+
+       Commit the fix.
+
+   Part 2 starts from there.
+
+Stretch:
+- `/verify Can you play this on a phone held sideways?`
+- The striped moments in the report are the ones it never looked at. Add a line to the skill that
+  makes it look at them, `/clear`, and ask again.
+- Ask a question about the screen without typing `/verify`. Does Claude reach for the skill on its
+  own? That's the `description` at work.
+
+## Part 2: grill, then build it with several agents
+
+Same folder as part 1, nothing new to install. One command runs the whole workflow, and it tells you
+what it's doing at each step:
+
+1. **Start it.** In this folder, start `claude` and type:
+
+       /feature a new tower
+
+   Or your own idea: `/feature a beetle that splits in two`.
+
+2. **Answer its questions.** It asks one at a time, each with a default; "yes" is a fine answer. No
+   idea of your own? Take the bee hive: 120 gold, and it stings every beetle in range at once. Then
+   read the spec it writes and say OK.
+
+3. **Watch it work.** It splits the spec into tickets that touch different files, and starts one
+   agent per ticket at the same time, each in its own git worktree (a separate checkout of this
+   repo, so they can't step on each other). Then it merges their work, runs the tests and plays the
+   game with `/verify` from part 1.
+
+4. **Check it yourself.** Open `index.html`: is the new tower in the build bar, and does it do what
+   you asked?
+
+5. **Read the skill:** `.claude/skills/feature/SKILL.md`. That's the whole workflow, written down. Change
+   a step and run it again.
+
+Stretch: run `/context` before and after. The agents read dozens of files, but your session grows only
+by their summaries.

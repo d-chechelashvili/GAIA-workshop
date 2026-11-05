@@ -205,8 +205,7 @@
     if (m.type === 'wkey') widgetKey(m.key, true);
   });
   function openPresenter() {
-    const lang = params.get('lang');
-    const url = location.href.split('#')[0].split('?')[0] + '?presenter' + (lang ? '&lang=' + lang : '') + location.hash;
+    const url = location.href.split('#')[0].split('?')[0] + '?presenter' + location.hash;
     peer = window.open(url, 'presenter-' + location.pathname, 'width=1500,height=900');
   }
 
@@ -377,25 +376,16 @@
     // ?script writes the speaker's script: per slide, what is on screen, what each click reveals, and the notes.
     if (params.has('script')) buildScript();
     // ?selftest walks every step forward, then back, and records any error in <body data-selftest>.
-    // ?selftest=700 pauses 700 ms after each forward step, so timed animations draw all their text;
-    // with ?lang it also reports the text that has no translation yet.
     if (params.has('selftest')) {
-      const errs = [], dwell = +params.get('selftest') || 0;
+      const errs = [];
       addEventListener('error', (e) => errs.push(`${idx + 1}/${step}: ${e.message}`));
-      const pause = () => new Promise((r) => setTimeout(r, dwell));
-      const atEnd = () => idx === slides.length - 1 && step === stepsOf(slides[idx]);
       let n = 0;
-      (async () => {
-        try {
-          goto(0, 0);
-          if (dwell) await pause();
-          while (!atEnd() && n < 5000) { next(); n++; if (dwell) await pause(); }
-          while (!(idx === 0 && step === 0) && n < 10000) { prev(); n++; }
-        } catch (e) { errs.push(`${idx + 1}/${step}: ${e.message}`); }
-        await new Promise((r) => setTimeout(r, 1500));
-        const I = window.I18N && window.I18N.missing ? { untranslated: [...window.I18N.missing].map(([k, at]) => ({ at, k })), i18nErrors: window.I18N.errors } : {};
-        document.body.dataset.selftest = JSON.stringify({ slides: slides.length, moves: n, errors: errs, ...I });
-      })();
+      try {
+        goto(0, 0);
+        while (!(idx === slides.length - 1 && step === stepsOf(slides[idx])) && n < 5000) { next(); n++; }
+        while (!(idx === 0 && step === 0) && n < 10000) { prev(); n++; }
+      } catch (e) { errs.push(`${idx + 1}/${step}: ${e.message}`); }
+      setTimeout(() => { document.body.dataset.selftest = JSON.stringify({ slides: slides.length, moves: n, errors: errs }); }, 1500);
     }
   }
   function buildScript() {

@@ -11,6 +11,7 @@
   ctx.scale(dpr, dpr);
   const hud = { wave: document.getElementById('wave'), lives: document.getElementById('lives'), gold: document.getElementById('gold'), banner: document.getElementById('banner') };
   let picked = null;
+  let speed = 1; // the 2× speed button; play.mjs runs with ?clock=manual, so it never sees this
 
   function paint() {
     const s = game.state;
@@ -24,10 +25,14 @@
       b.disabled = s.gold < G.TOWERS[b.dataset.tower].cost;
     });
     document.getElementById('start').disabled = s.phase !== 'build';
+    const fast = document.getElementById('speed');
+    fast.classList.toggle('picked', speed === 2);
+    fast.setAttribute('aria-pressed', String(speed === 2));
   }
 
   document.querySelectorAll('[data-tower]').forEach((b) => b.addEventListener('click', () => { picked = picked === b.dataset.tower ? null : b.dataset.tower; paint(); }));
   document.getElementById('start').addEventListener('click', () => { game.startWave(); paint(); });
+  document.getElementById('speed').addEventListener('click', () => { speed = speed === 2 ? 1 : 2; paint(); });
   canvas.addEventListener('click', (ev) => {
     if (!picked) return;
     const r = canvas.getBoundingClientRect();
@@ -39,7 +44,7 @@
   let last = performance.now(), carry = 0;
   function frame(now) {
     if (!manual) {
-      carry += Math.min(250, now - last) * 0.06; // 60 ticks a second
+      carry += Math.min(250, now - last) * 0.06 * speed; // 60 ticks a second, 120 at 2×
       const n = Math.floor(carry); carry -= n; game.step(n);
     }
     last = now; paint(); requestAnimationFrame(frame);

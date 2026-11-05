@@ -8,7 +8,7 @@ practice repo for the skills workshop in `WORKSHOP.md` (in Georgian: `WORKSHOP.k
 ## Play it
 
 Open `index.html` in a browser. Pick a tower in the bar at the bottom, click a grass tile to plant
-it, then **Start wave**. `?seed=N` picks the seed; `?clock=manual` stops the clock, so only
+it, then **Start wave**. **2× speed** runs the clock twice as fast (click again for normal speed). `?seed=N` picks the seed; `?clock=manual` stops the clock, so only
 `window.__game.step(n)` moves time.
 
 ## Check it
@@ -21,7 +21,7 @@ it, then **Start wave**. `?seed=N` picks the seed; `?clock=manual` stops the clo
 `play.mjs` drives the Chrome, Edge or Chromium already on the machine, over Chrome's own control
 pipe: nothing to install, no network port. Its header documents the scenario format: build towers,
 start waves, advance ticks, expect state or events, take screenshots. Screenshots go to
-`.verify/shots/`, and `.verify/gallery.html` shows the newest ones side by side.
+`.verify/shots/`, each with the game's state at that moment.
 
 ## How it is built
 
@@ -30,11 +30,16 @@ start waves, advance ticks, expect state or events, take screenshots. Screenshot
 - `game/render.js`: draws the garden on the canvas from the state.
 - `game/main.js`: the page: the HUD and the build bar (DOM), input, the game loop, and
   `window.__game`, the hook `play.mjs` drives.
-- `race.mjs`: lays out the workshop's race in the Herdr app: both Claudes, a pane that asks both,
-  and a feed of what each one plays. `lane.mjs` starts one of the two Claudes, `plain` (no skills)
-  or `yours`; `gallery.mjs` keeps the feed and the screenshot gallery. `browser.mjs` finds the
-  Chrome, Edge or Chromium that `play.mjs` drives and the gallery opens in.
+- `browser.mjs` finds the Chrome, Edge or Chromium that `play.mjs` drives.
+- `plain.mjs` starts Claude with skills switched off, to compare with `/verify`.
+- `.claude/skills/verify/`: `/verify`, which answers questions about the game by playing it and
+  looking at screenshots, then opens a one-page report (`report.mjs`; `before.mjs` plays the last
+  commit for a before-and-after). The first workshop uses it.
+- `.claude/skills/feature/`: the second workshop in one skill. `/feature a new tower` asks you
+  about it, writes a spec, builds its tickets with one agent each in separate worktrees, then tests
+  and verifies the result.
 
-`.claude/settings.json` lets Claude Code run the game, the tests and read-only git without asking,
-and keeps `WORKSHOP.md`, `WORKSHOP.ka.md`, any `solutions/` folder, everything outside this folder and the
-web out of its reach, so Claude works here as it would on any repo, without the answers.
+`.claude/settings.json` lets Claude Code run the game, the tests, `/verify`'s report and the git steps of
+`/feature` without asking, opens a window whenever Claude plays (`PLAY_WATCH`),
+and keeps `WORKSHOP.md`, `WORKSHOP.ka.md` and the web out of its reach, so Claude works here as it would on any
+repo, without the answers.
