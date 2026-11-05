@@ -51,7 +51,7 @@ echo
 if [ "$missing" -eq 0 ]; then
   echo 'ready. Set up the game:'
   echo '  git clone --depth 1 https://github.com/d-chechelashvili/GAIA-workshop'
-  echo '  node GAIA-workshop/workshop1/setup.mjs'
+  echo '  node GAIA-workshop/workshop/setup.mjs'
 else
   echo "not ready: install the $missing marked FIX, open a new terminal, and run this again."
   exit 1

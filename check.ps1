@@ -47,7 +47,7 @@ Write-Host ''
 if ($missing -eq 0) {
   Write-Host 'ready. Set up the game:' -ForegroundColor Green
   Write-Host '  git clone --depth 1 https://github.com/d-chechelashvili/GAIA-workshop'
-  Write-Host '  node GAIA-workshop/workshop1/setup.mjs'
+  Write-Host '  node GAIA-workshop/workshop/setup.mjs'
 } else {
   Write-Host "not ready: install the $missing marked FIX, open a new terminal, and run this again." -ForegroundColor Yellow
 }

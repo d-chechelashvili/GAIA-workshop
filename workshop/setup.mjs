@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* Sets up the workshop game in one step, on macOS, Linux and Windows:
-     node GAIA-workshop/workshop1/setup.mjs
+     node GAIA-workshop/workshop/setup.mjs
    It copies garden-guard next to this repo's folder, makes the copy a git repo of its own with a first
    commit (Claude's settings and worktrees need the game at a repo's root), and runs its machine check.
    If garden-guard is already set up there, it only runs the check again. */

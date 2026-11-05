@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI in the SDLC · Session 2 · From one agent to the bleeding edge</title>
+<link rel="stylesheet" href="assets/deck.css">
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- ============================== OPENING ============================== -->
+
+<section class="slide center" data-era="0" data-time="0:00">
+  <div class="kicker">AI in the SDLC <span class="sep">/</span> Session 2 of 2</div>
+  <h1 class="xxl">From one agent<br>to the bleeding edge</h1>
+  <p class="lead">Eras 5 to 8: from mid-2025 to October 2026.</p>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker">Last time</div>
+  <h1>The theory, in eight lines. Today: how to use it.</h1>
+  <div class="recap">
+    <div><span>Era 1</span>An LLM is a function of its input, and stateless on its own</div>
+    <div><span>Era 1</span>Tokens are the unit of cost and context, and differ by provider</div>
+    <div><span>Era 1</span>Training: imitate, then sharpen, then reward</div>
+    <div><span>Era 1</span>A chat re-sends the whole conversation every turn</div>
+    <div><span>Era 2</span>Function calling: the model writes the call, the server runs it</div>
+    <div><span>Era 2</span>More context, thinner attention. Curate it.</div>
+    <div><span>Era 3</span>The harness: tools on our machine, a loop, memory, a gate, MCP, skills</div>
+    <div><span>Era 4</span>Claude Code is that harness: a loop that checks its work with tests</div>
+  </div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker">Your knowledge is already stale</div>
+  <h1>Most of a 2025 CLAUDE.md is now wrong or noise</h1>
+  <div class="row top" style="gap:56px; margin-top:10px">
+    <div style="width:420px; flex:none">
+      <div class="term" style="font-size:23px"><span class="p">❯ </span>/doctor prompt-audit</div>
+      <p class="small" style="margin-top:16px">Shipped Sep 2026: flags prompting patterns “written for older models”.</p>
+    </div>
+    <div class="audit">
+      <div class="al c"># CLAUDE.md (written in 2025)</div>
+      <div class="al"><code data-cls="1:flag">See docs/setup.md for the build.</code><span class="why" data-step="1">path no longer exists</span></div>
+      <div class="al"><code data-cls="2:flag">Use # to save memories.</code><span class="why" data-step="2">removed command</span></div>
+      <div class="al"><code data-cls="3:flag">Always run the full test suite.</code><span class="why" data-step="3">contradicts AGENTS.md</span></div>
+      <div class="al"><code data-cls="4:flag">YOU MUST NEVER SKIP TESTS!!!</code><span class="why" data-step="4">shouting, written for older models</span></div>
+      <div class="al"><code>Money is integer cents.</code><span class="why ok" data-step="5">kept: not obvious</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== ERA 4, CONTINUED FROM SESSION 1 ============================== -->
+
+<section class="slide" data-era="4" data-time="0:05">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> Memory</div>
+  <div class="row top" style="gap:60px">
+    <div style="width:560px; flex:none">
+      <h1>CLAUDE.md: only what isn’t obvious</h1>
+      <p class="lead" style="margin-top:24px">It is added to every request, so every line costs context. If Claude would find it in a minute, delete it.</p>
+      <p class="body" data-step="3" style="margin-top:24px">Same idea, any agent: <span class="mono">AGENTS.md</span> (Aug 2025).</p>
+    </div>
+    <div class="term light" style="flex:1; font-size:23px">
+<span class="c"># CLAUDE.md</span>
+<span data-cls="1:strike">This is a TypeScript project.</span>
+<span data-cls="1:strike">Use good variable names.</span>
+<span data-cls="1:strike">Tests live in tests/.</span>
+<span data-cls="2:mark">Run tests with `pnpm test:unit`; `pnpm test` hits prod.</span>
+<span data-cls="2:mark">Never edit src/gen/: it is generated from schema/.</span>
+<span data-cls="2:mark">Money is integer cents. No floats, ever.</span>
+<span data-cls="1:strike">Write clean code.</span>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> Skills</div>
+  <h1>Skills: instructions that load only when a task needs them</h1>
+  <div class="fill" data-widget="skillload" data-label="how skills load" style="margin-top:20px"></div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> Skills in practice</div>
+  <div class="row top" style="gap:56px">
+    <div style="width:520px; flex:none">
+      <h1>Skills in practice: the description is the trigger</h1>
+      <p class="lead" style="margin-top:24px">A skill is a folder with a SKILL.md. Until a task matches, Claude reads only its description.</p>
+      <p class="body" data-step="2" style="margin-top:24px">So write the description like a search query: when to use it, in the words a user would type.</p>
+    </div>
+    <div class="term light" style="flex:1; font-size:22px"><span class="c"># .claude/skills/release-notes/SKILL.md</span>
+---
+name: release-notes
+<span data-cls="2:mark">description: Write release notes from merged PRs.
+  Use when asked for a changelog or release notes.</span>
+---
+<span data-step="1">1. List PRs merged since the last tag: `gh pr list …`
+2. Group them: features, fixes, internal.
+3. One line each, user-facing words, no PR jargon.
+4. End with upgrade notes if any config changed.</span></div>
+  </div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> A skill worth having</div>
+  <h1>/verify: prove it by running it, not by reading it</h1>
+  <div class="row top" style="gap:56px; margin-top:4px">
+    <div style="flex:1">
+      <div class="vsteps">
+        <div data-step="1"><span>1</span><b>Pin the question</b><p>Something you can observe: which input, what counts as yes</p></div>
+        <div data-step="2"><span>2</span><b>Run it</b><p>The real program, on that input</p></div>
+        <div data-step="3"><span>3</span><b>Read the output</b><p>What a user would check, quoted line by line</p></div>
+        <div data-step="4"><span>4</span><b>Before and after</b><p>For a change: the same input, old code and new</p></div>
+        <div data-step="5"><span>5</span><b>Answer with evidence</b><p>The verdict, the command, the lines that prove it</p></div>
+      </div>
+      <p class="body" data-step="6" style="margin-top:18px; color:var(--ink)">Tests check what someone thought of. /verify looks at what actually comes out.</p>
+    </div>
+    <div style="width:470px; flex:none">
+      <div class="small" style="margin-bottom:8px">In the workshop, the output is a game screen</div>
+      <img class="shot" src="media/garden-guard.png" alt="Garden Guard after wave 1: a garden road, two thorn bushes, trees, the greenhouse at the end, the HUD reading Wave 2/3, 10 lives, 80 gold, and the build bar.">
+    </div>
+  </div>
+</section>
+
+<!-- ============================== WORKSHOP 1 ============================== -->
+
+<section class="slide" data-era="4" data-time="0:15">
+  <div class="kicker">Workshop · Set up</div>
+  <h1>First, get the game running</h1>
+  <div class="moves sm" style="margin-top:40px"><div><span>1</span><span>Node 18+, Chrome or Edge, git and Claude Code. The README’s one-line check says what’s missing</span></div><div><span>2</span><span class="mono">git clone --depth 1 https://github.com/d-chechelashvili/GAIA-workshop</span></div><div><span>3</span><span><span class="mono">node GAIA-workshop/workshop/setup.mjs</span>, until it says ready</span></div><div><span>4</span><span><span class="mono">cd garden-guard</span>, then <span class="mono">claude</span> once: “Yes, I trust this folder”, then <span class="mono">/exit</span></span></div></div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker">Workshop · 20 minutes</div>
+  <h1>Ask without /verify, then with it, then prove a fix</h1>
+  <div class="row top" style="gap:40px; margin-top:6px">
+    <div class="cols-2" style="flex:1">
+      <div class="card"><span class="tag">1</span><h3 style="margin-top:14px">Play it first</h3><p class="body">Open <span class="mono">index.html</span>, plant a few towers and start a wave, so you know what Claude should see.</p></div>
+      <div class="card"><span class="tag">2</span><h3 style="margin-top:14px">Without, with, your fix</h3><p class="body">Ask Claude with no skills, then /verify the same question. Then Claude fixes the bug, /verify proves the fix, and Claude commits it.</p></div>
+    </div>
+    <div style="width:380px"><div data-widget="timer" data-min="20" data-size="m" data-label="20-minute timer"></div></div>
+  </div>
+  <div style="margin-top:6px"><div style="display:flex;align-items:center;gap:18px;margin-bottom:10px"><span style="background:#e5484d;color:#fff;font-weight:800;font-size:30px;padding:2px 16px;border-radius:8px">NO</span><span style="font-size:22px">/verify’s report: which moments of the game it looked at</span></div>
+  <div style="display:flex;gap:8px"><div style="flex:1;border-radius:10px;padding:8px 10px;min-height:86px;display:flex;flex-direction:column;justify-content:center;gap:4px;background:repeating-linear-gradient(135deg,rgba(128,128,128,.10) 0 8px,rgba(128,128,128,.04) 8px 16px);border:2px dashed rgba(128,128,128,.45)"><span style="font-size:15px;opacity:.75">Before wave 1</span><b style="font-size:19px;opacity:.6;font-weight:500">not checked</b></div><div style="flex:1;border-radius:10px;padding:8px 10px;min-height:86px;display:flex;flex-direction:column;justify-content:center;gap:4px;background:repeating-linear-gradient(135deg,rgba(128,128,128,.10) 0 8px,rgba(128,128,128,.04) 8px 16px);border:2px dashed rgba(128,128,128,.45)"><span style="font-size:15px;opacity:.75">During wave 1</span><b style="font-size:19px;opacity:.6;font-weight:500">not checked</b></div><div style="flex:1;border-radius:10px;padding:8px 10px;min-height:86px;display:flex;flex-direction:column;justify-content:center;gap:4px;background:repeating-linear-gradient(135deg,rgba(128,128,128,.10) 0 8px,rgba(128,128,128,.04) 8px 16px);border:2px dashed rgba(128,128,128,.45)"><span style="font-size:15px;opacity:.75">Between 1 and 2</span><b style="font-size:19px;opacity:.6;font-weight:500">not checked</b></div><div style="flex:1;border-radius:10px;padding:8px 10px;min-height:86px;display:flex;flex-direction:column;justify-content:center;gap:4px;background:rgba(229,72,77,.12);border:2px solid #e5484d"><span style="font-size:15px;opacity:.75">During wave 2</span><b style="font-size:19px;color:#e5484d">✗ Wave 3/3</b></div><div style="flex:1;border-radius:10px;padding:8px 10px;min-height:86px;display:flex;flex-direction:column;justify-content:center;gap:4px;background:repeating-linear-gradient(135deg,rgba(128,128,128,.10) 0 8px,rgba(128,128,128,.04) 8px 16px);border:2px dashed rgba(128,128,128,.45)"><span style="font-size:15px;opacity:.75">Between 2 and 3</span><b style="font-size:19px;opacity:.6;font-weight:500">not checked</b></div><div style="flex:1;border-radius:10px;padding:8px 10px;min-height:86px;display:flex;flex-direction:column;justify-content:center;gap:4px;background:repeating-linear-gradient(135deg,rgba(128,128,128,.10) 0 8px,rgba(128,128,128,.04) 8px 16px);border:2px dashed rgba(128,128,128,.45)"><span style="font-size:15px;opacity:.75">During wave 3</span><b style="font-size:19px;opacity:.6;font-weight:500">not checked</b></div><div style="flex:1;border-radius:10px;padding:8px 10px;min-height:86px;display:flex;flex-direction:column;justify-content:center;gap:4px;background:repeating-linear-gradient(135deg,rgba(128,128,128,.10) 0 8px,rgba(128,128,128,.04) 8px 16px);border:2px dashed rgba(128,128,128,.45)"><span style="font-size:15px;opacity:.75">After the last</span><b style="font-size:19px;opacity:.6;font-weight:500">not checked</b></div></div></div>
+  <div class="small" style="margin-top:14px">In garden-guard: <span class="mono">node plain.mjs</span>, ask, <span class="mono">/exit</span> · <span class="mono">claude</span>, then <span class="mono">/verify &lt;the same question&gt;</span> · “Fix the HUD…”, <span class="mono">/clear</span>, <span class="mono">/verify Did your change work?</span>, “Commit the fix.”</div>
+</section>
+
+<!-- ============================== ERA 4, THEN AND NOW ============================== -->
+
+<section class="slide" data-era="4" data-time="0:35">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> Then and now</div>
+  <h1>2025 H1: the agent moves into the terminal</h1>
+  <div class="tn">
+    <div class="tn-head"><span>Then</span><span></span><span>Now</span></div>
+    <div class="tn-row" data-step="1"><div class="then">Vibe coding: accept everything, hope it works</div><i>→</i><div class="now">Agentic engineering: tests, review, ownership</div></div>
+    <div class="tn-row" data-step="2"><div class="then">Start a message with # to save a memory</div><i>→</i><div class="now">Claude writes memories itself (Feb 2026)</div></div>
+    <div class="tn-row" data-step="3"><div class="then">Custom slash commands</div><i>→</i><div class="now">Skills, with commands merged in (Jan 2026)</div></div>
+  </div>
+</section>
+
+<section class="slide" data-era="4">
+  <div class="kicker"><span class="dot"></span>Era 4 · The terminal agent <span class="sep">/</span> Lessons that still hold</div>
+  <h1>Lessons that still hold</h1>
+  <div class="lessons">
+    <div data-step="1"><span class="n">1</span><b>Give it a way to check its work.</b><p>Tests are the success signal. Without them the loop can’t tell it’s done.</p></div>
+    <div data-step="2"><span class="n">2</span><b>Write down only what isn’t obvious.</b><p>CLAUDE.md is in every request, so every line costs context.</p></div>
+    <div data-step="3"><span class="n">3</span><b>Learn the principle, not the trick.</b><p>The # memory shortcut lived nine months. The idea behind it is still here.</p></div>
+  </div>
+</section>
+
+<!-- ============================== ERA 5 ============================== -->
+
+<section class="slide era-card" data-era="5" data-time="0:38">
+  <div class="num">Era 5</div>
+  <h1>Making it reliable</h1>
+  <div class="dates">2025 H2</div>
+  <div class="facts">
+    <div class="fact" data-step="1"><div class="h"><i style="background:var(--ink)"></i>Became possible</div><div class="v">Hooks (Jun), subagents (Jul), /security-review (Aug), skills (Oct)</div></div>
+    <div class="fact" data-step="2"><div class="h"><i style="background:var(--ink-2)"></i>The workflow</div><div class="v">Loops, specs, hooks</div></div>
+    <div class="fact" data-step="3"><div class="h"><i style="background:var(--human)"></i>The human</div><div class="v">Writes the spec, judges results</div></div>
+  </div>
+  <div data-step="4" style="margin-top:44px"><div data-widget="lanechips" data-era="5"></div></div>
+</section>
+
+<section class="slide" data-era="5">
+  <div class="kicker"><span class="dot"></span>Era 5 · Making it reliable <span class="sep">/</span> Instructions vs enforcement</div>
+  <h1>Instructions can be ignored. Hooks can’t.</h1>
+  <p class="lead">A rule in CLAUDE.md is a request the model usually follows. A hook is code that runs every time.</p>
+  <div class="fill" data-widget="enforce" data-label="instruction vs enforcement" style="margin-top:10px"></div>
+</section>
+
+<section class="slide" data-era="5">
+  <div class="kicker"><span class="dot"></span>Era 5 · Making it reliable <span class="sep">/</span> Hooks, Jun 2025</div>
+  <h1>A hook runs every time. No exceptions.</h1>
+  <div class="row top" style="gap:40px; margin-top:6px">
+    <div class="term light" style="width:680px; flex:none; font-size:21px"><span class="c">// .claude/settings.json</span>
+"PreToolUse": [{
+  "matcher": "Read",
+  "hooks": [{ "type": "command",
+    "command": ".claude/hooks/no-env.sh" }]
+}]
+<span class="c"># no-env.sh: the tool call arrives as JSON</span>
+jq -r .tool_input.file_path |
+  grep -q '\.env$' &amp;&amp; exit 2
+exit 0</div>
+    <div class="term" style="flex:1; font-size:23px"><div class="term-bar"><i></i><i></i><i></i></div><span data-step="1"><span class="g">⏺</span> Read(.env)</span>
+<span data-step="2"><span class="r">  ⎿ Blocked by hook (exit 2)</span></span>
+<span data-step="3"><span class="g">⏺</span> I’ll use .env.example.</span></div>
+  </div>
+  <div class="row" data-step="4" style="gap:14px; margin-top:6px"><span class="chip"><span class="sw" style="background:var(--scaf)"></span>Also every edit: a PostToolUse hook runs your linter</span><span class="chip"><span class="sw"></span>Safety net: Esc Esc rewinds code and conversation (Sep 2025)</span></div>
+</section>
+
+<section class="slide" data-era="5">
+  <div class="kicker"><span class="dot"></span>Era 5 · Making it reliable <span class="sep">/</span> The workflow</div>
+  <h1>Spec-driven development: agree on what, then let it build</h1>
+  <div class="chev" style="grid-template-columns:repeat(5, 1fr)">
+    <div data-step="1"><b>Grill me</b><span>it asks until the intent is clear</span></div>
+    <div data-step="2"><b>Spec</b><span>what, not how, in a file in the repo</span></div>
+    <div data-step="3"><b>Tickets</b><span>small, each owning its own files</span></div>
+    <div data-step="4"><b>TDD</b><span>a failing test is the done condition</span></div>
+    <div data-step="5" class="end"><b>Verify</b><span>run it and look, with /verify</span></div>
+  </div>
+  <p class="body" data-step="6" style="margin-top:28px">The 2025 wave: Kiro (Jul 2025) and GitHub Spec Kit (Sep 2025). Matt Pocock’s skills are the lightweight version of the same steps.</p>
+</section>
+
+<section class="slide" data-era="5">
+  <div class="kicker"><span class="dot"></span>Era 5 · Making it reliable <span class="sep">/</span> The workflow, written down</div>
+  <div class="row top" style="gap:56px">
+    <div style="width:540px; flex:none">
+      <h1>A spec is short, and says when it’s done</h1>
+      <p class="lead" style="margin-top:24px">Grill me ends with a file like this. Each ticket owns its files, so each can go to its own agent.</p>
+      <p class="body" data-step="2" style="margin-top:24px">You’ll write one like it in the second workshop.</p>
+    </div>
+    <div class="term light" style="flex:1; font-size:21px"><span class="c"># docs/spec-bee-hive.md</span>
+## What
+A third tower, the bee hive: it stings every
+beetle in range at once.
+## Rules
+120 gold · range 1.5 tiles · 2 damage to each
+beetle in range, every 60 ticks
+<span data-cls="1:mark">## Done when
+- a test: a hive next to 3 beetles hurts all 3
+- /verify: it is in the build bar, and it
+  stings beetles in wave 1</span>
+<span data-cls="2:mark">## Tickets
+1. engine and test   game/engine.js, test/
+2. how it looks      game/render.js
+3. its button        index.html</span></div>
+  </div>
+</section>
+
+<section class="slide breather center" data-era="5">
+  <div class="badge"><span class="pause"></span>Fun fact · Jul 2025</div>
+  <div class="quote">Ralph is a Bash loop.</div>
+  <div class="term" style="max-width:900px; font-size:28px">while :; do cat PROMPT.md | claude-code ; done</div>
+  <div class="who">Geoffrey Huntley’s original, verbatim (today’s CLI is <span class="mono">claude -p</span>). Named after Ralph Wiggum; he never explains why.</div>
+  <div class="lesson">Dumb persistence, good specs and backpressure get surprisingly far.</div>
+</section>
+
+<section class="slide" data-era="5">
+  <div class="kicker"><span class="dot"></span>Era 5 · Making it reliable <span class="sep">/</span> Then and now</div>
+  <h1>2025 H2: from asking nicely to enforcing</h1>
+  <div class="tn">
+    <div class="tn-head"><span>Then</span><span></span><span>Now</span></div>
+    <div class="tn-row" data-step="1"><div class="then">Rules in CLAUDE.md: “NEVER read .env”</div><i>→</i><div class="now">A hook blocks it, every time</div></div>
+    <div class="tn-row" data-step="2"><div class="then">Prompt it and hope</div><i>→</i><div class="now">Spec-driven: grill me, a spec, tickets, tests</div></div>
+    <div class="tn-row" data-step="3"><div class="then">Undoing a bad edit by hand</div><i>→</i><div class="now">Esc Esc rewinds the code and the conversation</div></div>
+  </div>
+</section>
+
+<section class="slide" data-era="5">
+  <div class="kicker"><span class="dot"></span>Era 5 · Making it reliable <span class="sep">/</span> Lessons that still hold</div>
+  <h1>Lessons that still hold</h1>
+  <div class="lessons">
+    <div data-step="1"><span class="n">1</span><b>If it must always happen, enforce it.</b><p>A hook runs every time. An instruction can be ignored.</p></div>
+    <div data-step="2"><span class="n">2</span><b>Agree on done before it starts.</b><p>Let it grill you, then give it a done condition it can check.</p></div>
+    <div data-step="3"><span class="n">3</span><b>Write the spec down.</b><p>A spec in the repo survives /clear, a new session and the next agent.</p></div>
+  </div>
+</section>
+
+<!-- ============================== ERA 6 ============================== -->
+
+<section class="slide era-card" data-era="6" data-time="0:52">
+  <div class="num">Era 6</div>
+  <h1>Many agents</h1>
+  <div class="dates">Q4 2025 – Q1 2026</div>
+  <div class="facts">
+    <div class="fact" data-step="1"><div class="h"><i style="background:var(--ink)"></i>Became possible</div><div class="v">Sandboxing, worktrees, agent teams (Feb), AI review on every PR (Mar)</div></div>
+    <div class="fact" data-step="2"><div class="h"><i style="background:var(--ink-2)"></i>The workflow</div><div class="v">One task, split across isolated agents</div></div>
+    <div class="fact" data-step="3"><div class="h"><i style="background:var(--human)"></i>The human</div><div class="v">Splits the work, reviews the results</div></div>
+  </div>
+  <div data-step="4" style="margin-top:44px"><div data-widget="lanechips" data-era="6"></div></div>
+</section>
+
+<section class="slide" data-era="6">
+  <div class="kicker"><span class="dot"></span>Era 6 · Many agents <span class="sep">/</span> The workflow</div>
+  <h1>One task, several agents at once</h1>
+  <div class="row top" style="gap:56px; margin-top:6px">
+    <div class="vsteps" style="flex:1">
+      <div data-step="1"><span>1</span><b>Spec and tickets</b><p>From era 5: each ticket owns its own files</p></div>
+      <div data-step="2"><span>2</span><b>One agent per ticket</b><p>Each in its own worktree, with its own context</p></div>
+      <div data-step="3"><span>3</span><b>Run them in parallel</b><p>You get notified when one needs you</p></div>
+      <div data-step="4"><span>4</span><b>Review each result</b><p>AI review on the PR first, then you</p></div>
+      <div data-step="5"><span>5</span><b>Merge</b><p>One owner per area, so nothing conflicts</p></div>
+    </div>
+    <div class="term" style="width:560px; flex:none; font-size:22px" data-step="2"><span class="p">$ </span>claude -w hive-engine
+<span class="p">$ </span>claude -w hive-render
+<span class="p">$ </span>claude -w hive-button
+
+<span class="c"># or, in one session:</span>
+<span class="p">❯ </span>Implement the tickets in
+  parallel: one subagent each,
+  each in its own worktree.</div>
+  </div>
+</section>
+
+<section class="slide" data-era="6">
+  <div class="kicker"><span class="dot"></span>Era 6 · Many agents <span class="sep">/</span> Four ways to run many</div>
+  <h1>Pick the isolation you need</h1>
+  <div class="fill" data-widget="modes" data-label="subagents, subsessions, worktrees, teams" style="margin-top:12px"></div>
+</section>
+
+<section class="slide" data-era="6">
+  <div class="kicker"><span class="dot"></span>Era 6 · Many agents <span class="sep">/</span> Worktrees</div>
+  <h1>A worktree is a second checkout of the same repo</h1>
+  <div class="row top" style="gap:48px; margin-top:16px">
+    <div class="term light" style="flex:1; font-size:22px"><span class="c"># one repository, three working folders</span>
+garden-guard/   <span class="k">main</span>          ← you
+gg-engine/      <span class="k">hive-engine</span>   ← agent 1
+gg-render/      <span class="k">hive-render</span>   ← agent 2
+
+<span class="c"># made with</span>
+git worktree add ../gg-engine -b hive-engine
+git worktree list
+git worktree remove ../gg-engine</div>
+    <div style="width:520px; flex:none; display:grid; gap:18px">
+      <div class="card" data-step="1"><h3>Its own files and branch</h3><p class="body">Agents can’t overwrite each other’s edits or break each other’s test runs.</p></div>
+      <div class="card" data-step="2"><h3>One shared history</h3><p class="body">Commits land in the same repo. No second clone to sync.</p></div>
+      <div class="card" data-step="3"><h3><span class="mono">claude -w name</span></h3><p class="body">Makes a worktree and starts Claude in it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-era="6">
+  <div class="kicker"><span class="dot"></span>Era 6 · Many agents <span class="sep">/</span> The dispatcher’s desk</div>
+  <h1>Many agents, one human who gets notified</h1>
+  <div class="row top" style="gap:44px; margin-top:16px">
+    <div class="term" style="flex:1; font-size:24px"><span class="p">❯ </span>claude agents
+<span data-step="1"><span class="g">●</span> api-refactor       running    12m   worktree wt/api</span>
+<span data-step="1"><span class="s">◐</span> flaky-test-hunt    <span class="s">waiting for you: approve migration?</span></span>
+<span data-step="2"><span class="g">✓</span> docs-update        done       PR #412</span>
+<span data-step="2"><span class="g">●</span> perf-probe         running     3m   cloud</span></div>
+    <div style="width:420px; display:grid; gap:18px" data-step="3">
+      <span class="chip" style="font-size:21px"><span class="sw"></span>Background agents · Dec 2025</span>
+      <span class="chip" style="font-size:21px"><span class="sw"></span>Agent view · May 2026</span>
+      <span class="chip" style="font-size:21px"><span class="sw" style="background:var(--ink-2)"></span>Herdr: a ring when one needs you</span>
+    </div>
+  </div>
+  <p class="small" style="margin-top:10px">Illustrative listing.</p>
+</section>
+
+<section class="slide" data-era="6">
+  <div class="kicker"><span class="dot" style="background:var(--scaf)"></span>Era 6 · Many agents <span class="sep">/</span> Scaffolding: AI review</div>
+  <h1>Every PR gets an AI reviewer before a human</h1>
+  <div class="cols-3" style="margin-top:22px">
+    <div class="card" data-step="1" style="border-color:var(--scaf)"><span class="tag">GA Apr 2025</span><h3 style="margin-top:12px">GitHub Copilot code review</h3><p class="body">By Mar 2026, more than 1 in 5 reviews on GitHub; 12,000+ orgs run it on every PR</p></div>
+    <div class="card" data-step="2" style="border-color:var(--scaf)"><span class="tag">GA Jul 2025</span><h3 style="margin-top:12px">Cursor Bugbot</h3><p class="body">Started in Cursor 1.0 (Jun 2025); looks for bugs in every PR</p></div>
+    <div class="card" data-step="3" style="border-color:var(--scaf)"><span class="tag">Mar 2026</span><h3 style="margin-top:12px">Claude Code Review</h3><p class="body">A team of agents on every PR, “to catch the bugs that skims miss”. GA in Oct 2026</p></div>
+  </div>
+  <div class="row" data-step="4" style="gap:14px; margin-top:22px; flex-wrap:wrap"><span class="chip"><span class="sw" style="background:var(--scaf)"></span>CodeRabbit · valued at $1.5B, Aug 2026</span><span class="chip"><span class="sw" style="background:var(--scaf)"></span>Greptile · comments with logs and screenshots</span><span class="chip"><span class="sw" style="background:var(--scaf)"></span>Any CI: <span class="mono">claude -p</span> or the Claude Code GitHub Action</span></div>
+  <p class="lead" data-step="5" style="margin-top:22px">A second reader on every change. It finds; you decide what merges.</p>
+  <div class="source">github.blog, Mar 5, 2026 · cursor.com/blog/bugbot-out-of-beta · claude.com/blog/code-review (Mar 9) and its GA post (Oct 15, 2026) · coderabbit.ai newsroom · greptile.com/changelog. Vendor-reported.</div>
+</section>
+
+<section class="slide" data-era="6">
+  <div class="kicker"><span class="dot" style="background:var(--critical)"></span>Era 6 · Many agents <span class="sep">/</span> Prompt injection</div>
+  <h1 style="font-size:52px">Private data + untrusted content + a way out = a leak</h1>
+  <div class="fill" data-widget="trifecta" data-label="lethal trifecta"></div>
+  <div class="source">The “lethal trifecta”: Simon Willison, Jun 2025.</div>
+</section>
+
+<section class="slide breather center" data-era="6">
+  <div class="badge"><span class="pause"></span>Fun fact · Apr 2026</div>
+  <div class="quote">I decided to do it on my own to “fix” the credential mismatch.</div>
+  <div class="who">A Cursor agent on Opus 4.6 at PocketOS. Working in staging, it found an unrestricted API token in an unrelated file and deleted the production volume in one call, in 9 seconds. The backups lived in the same volume.</div>
+  <div class="lesson">Least privilege. Backups out of the agent’s reach.</div>
+</section>
+
+<section class="slide" data-era="6">
+  <div class="kicker"><span class="dot"></span>Era 6 · Many agents <span class="sep">/</span> Then and now</div>
+  <h1>Late 2025 – early 2026: one agent becomes several</h1>
+  <div class="tn">
+    <div class="tn-head"><span>Then</span><span></span><span>Now</span></div>
+    <div class="tn-row" data-step="1"><div class="then">A human reads every PR alone</div><i>→</i><div class="now">An AI reviewer on every PR, then a human</div></div>
+    <div class="tn-row" data-step="2"><div class="then">One agent at a time</div><i>→</i><div class="now">Several, isolated in worktrees</div></div>
+    <div class="tn-row" data-step="3"><div class="then">Merge conflicts sorted out by hand</div><i>→</i><div class="now">Ownership areas</div></div>
+  </div>
+</section>
+
+<section class="slide" data-era="6">
+  <div class="kicker"><span class="dot"></span>Era 6 · Many agents <span class="sep">/</span> Lessons that still hold</div>
+  <h1>Lessons that still hold</h1>
+  <div class="lessons">
+    <div data-step="1"><span class="n">1</span><b>Isolate parallel agents.</b><p>Worktrees or sandboxes, so they don’t step on each other.</p></div>
+    <div data-step="2"><span class="n">2</span><b>Give every area an owner.</b><p>With many agents, merge conflicts become an org problem.</p></div>
+    <div data-step="3"><span class="n">3</span><b>Break the lethal trifecta.</b><p>Private data, untrusted content and a way out: remove at least one.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-era="6" data-time="1:08" data-rail="off" data-title="Break, 10 minutes">
+  <div class="kicker">Break · 10 minutes</div>
+  <div class="row top" style="gap:80px; margin-top:20px">
+    <div style="flex:1"><div data-widget="timer" data-min="10" data-label="10-minute timer"></div></div>
+  </div>
+</section>
+
+<!-- ============================== WORKSHOP 2 ============================== -->
+
+<section class="slide" data-era="6" data-time="1:18">
+  <div class="kicker">Workshop · 20 minutes</div>
+  <h1>Grill, then build it with several agents</h1>
+  <div class="row top" style="gap:40px; margin-top:10px">
+    <div class="cols-3" style="flex:1">
+      <div class="card"><span class="tag">1 · Start</span><h3 class="mono" style="margin-top:14px">/feature a new tower</h3><p class="body">One command, in the same folder as the first workshop. Nothing to install.</p></div>
+      <div class="card"><span class="tag">2 · Answer</span><h3 style="margin-top:14px">It grills you</h3><p class="body">One question at a time, each with a default. Then it writes the spec; you say OK.</p></div>
+      <div class="card"><span class="tag">3 · Watch</span><h3 style="margin-top:14px">Agents in parallel</h3><p class="body">One per ticket, each in its own worktree. Then it merges, tests and runs /verify.</p></div>
+    </div>
+    <div style="width:380px"><div data-widget="timer" data-min="20" data-size="m" data-label="20-minute timer"></div></div>
+  </div>
+</section>
+
+<!-- ============================== ERA 7 ============================== -->
+
+<section class="slide era-card" data-era="7" data-time="1:38">
+  <div class="num">Era 7</div>
+  <h1>Systems of agents</h1>
+  <div class="dates">2026 Q2 – Q3</div>
+  <div class="facts">
+    <div class="fact" data-step="1"><div class="h"><i style="background:var(--ink)"></i>Became possible</div><div class="v">Workflows / ultracode, routines, Claude Tag (Jun), auto mode by default (Aug)</div></div>
+    <div class="fact" data-step="2"><div class="h"><i style="background:var(--ink-2)"></i>The workflow</div><div class="v">Graphs of agents; scheduled, team and watching agents</div></div>
+    <div class="fact" data-step="3"><div class="h"><i style="background:var(--human)"></i>The human</div><div class="v">Designs the system of agents</div></div>
+  </div>
+  <div data-step="4" style="margin-top:44px"><div data-widget="lanechips" data-era="7"></div></div>
+</section>
+
+<section class="slide" data-era="7">
+  <div class="kicker"><span class="dot"></span>Era 7 · Systems of agents <span class="sep">/</span> The workflow</div>
+  <h1>Graph engineering: design the system that does the work</h1>
+  <div class="cols-3" style="margin-top:22px">
+    <div class="card" data-step="1"><span class="tag">Node</span><h3 style="margin-top:12px">An agent with one narrow job</h3><p class="body">Its own prompt, tools, model and context. Every node is still a loop.</p></div>
+    <div class="card" data-step="2"><span class="tag">Edge</span><h3 style="margin-top:12px">What it hands on</h3><p class="body">A plan, a diff, a verdict: evidence the next node can check, not chat.</p></div>
+    <div class="card" data-step="3"><span class="tag">Gate</span><h3 style="margin-top:12px">What decides</h3><p class="body">Tests, a verifier agent or plain code: go on, go back, or stop.</p></div>
+  </div>
+  <p class="body" data-step="4" style="margin-top:30px">Loop engineering writes one agent’s goal and done condition (<span class="mono">/goal</span>). Graph engineering decides which agents, what each passes on, and where the checks are (<span class="mono">ultracode</span>).</p>
+</section>
+
+<section class="slide" data-era="7">
+  <div class="kicker"><span class="dot"></span>Era 7 · Systems of agents <span class="sep">/</span> Loop engineering → graph engineering</div>
+  <h1>Loops become graphs</h1>
+  <div class="fill" data-widget="fanout" data-label="loop to graph fan-out" style="margin-top:10px"></div>
+  <div class="row" style="gap:14px"><span class="chip"><span class="sw"></span>/loop · Mar 2026</span><span class="chip"><span class="sw"></span>/goal · May 2026</span><span class="chip"><span class="sw"></span>ultracode · Jun 2026</span></div>
+</section>
+
+<section class="slide" data-era="7">
+  <div class="kicker"><span class="dot"></span>Era 7 · Systems of agents <span class="sep">/</span> Graph engineering, by example</div>
+  <h1>The second workshop, as a graph</h1>
+  <div class="fill" data-widget="graphex" data-label="the workshop as a graph" style="margin-top:8px"></div>
+  <p class="body" data-step="5" style="margin-top:4px">In the workshop, <span class="mono">/feature</span> ran this inside one session. As a graph, each step is its own node, with its own model and its own check: in Claude Code, a dynamic workflow started with <span class="mono">ultracode</span>, and <span class="mono">/workflows</span> shows every node.</p>
+</section>
+
+<section class="slide breather center" data-era="7">
+  <div class="badge"><span class="pause"></span>Fun fact · May 2026</div>
+  <div class="quote nq">It took a year and four model generations to beat a 1996 Game Boy game.</div>
+  <div class="who">Claude Plays Pokémon started with Sonnet 3.7 in Feb 2025 and got stuck for days in Mt. Moon. Opus 4.7 finished Pokémon Red on 16 May 2026.</div>
+  <div class="lesson">Long-horizon work is harder than clever moves. Progress is still steep.</div>
+</section>
+
+<section class="slide" data-era="7">
+  <div class="kicker"><span class="dot"></span>Era 7 · Systems of agents <span class="sep">/</span> Autonomous agents</div>
+  <h1>The same agent, with no one at the keyboard</h1>
+  <div class="term" style="margin-top:20px; font-size:28px"><span class="p">$ </span>git diff main | claude -p "Review this diff for bugs. Reply with a list."</div>
+  <div class="cols-3" style="margin-top:28px">
+    <div class="card" data-step="1"><h3>In CI</h3><p class="body">The GitHub Action, on every PR</p></div>
+    <div class="card" data-step="2"><h3>On a schedule</h3><p class="body">Routines: cloud agents on a timer</p></div>
+    <div class="card" data-step="3"><h3>On an event</h3><p class="body">A failed deploy wakes an agent</p></div>
+  </div>
+</section>
+
+<section class="slide" data-era="7">
+  <div class="kicker"><span class="dot"></span>Era 7 · Systems of agents <span class="sep">/</span> Team agents, Jun 2026</div>
+  <div class="row top" style="gap:60px">
+    <div style="width:600px; flex:none">
+      <h1>One agent for the whole channel</h1>
+      <p class="lead" style="margin-top:22px">Claude Tag lives in Slack. Anyone in a thread can steer it. It keeps notes per channel that anyone can read and correct.</p>
+      <p class="body" data-step="3" style="margin-top:28px"><b>If it’s not written down and accessible, it doesn’t exist.</b> Team memory is the new documentation.</p>
+    </div>
+    <div class="slack">
+      <div class="msg" data-step="1"><i class="av" style="background:var(--human)"></i><div><b>Dana</b><p>@Claude the export job fails for EU customers, can you look?</p></div></div>
+      <div class="msg bot" data-step="1"><i class="av" style="background:var(--cc)"></i><div><b>Claude</b><p>On it. ☐ reproduce ☐ find cause ☐ draft PR</p></div></div>
+      <div class="msg" data-step="2"><i class="av" style="background:var(--scaf)"></i><div><b>Sam</b><p>It’s probably the date format, check locale.ts</p></div></div>
+      <div class="msg bot" data-step="2"><i class="av" style="background:var(--cc)"></i><div><b>Claude</b><p>☑ reproduce ☑ cause: locale.ts ☐ draft PR</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-era="7">
+  <div class="kicker"><span class="dot"></span>Era 7 · Systems of agents <span class="sep">/</span> Superfans</div>
+  <h1>One agent per component, watching it all day</h1>
+  <p class="lead" style="margin-top:18px">Anthropic gives each part of its source-control system a Slack channel with a Claude “obsessively focused on the health of a single component”.</p>
+  <div class="cols-3" style="margin-top:26px">
+    <div class="card" data-step="1"><span class="tag">Watches</span><h3 style="margin-top:12px">Telemetry and logs</h3><p class="body">Like an engineer with nothing better to do than refresh the charts</p></div>
+    <div class="card" data-step="2"><span class="tag">Notices</span><h3 style="margin-top:12px">What alerts miss</h3><p class="body">Slow drift and new kinds of errors, under every threshold</p></div>
+    <div class="card" data-step="3"><span class="tag">Reports</span><h3 style="margin-top:12px">In its own channel</h3><p class="body">Next to the alerts, not instead of them. Anyone can steer it.</p></div>
+  </div>
+  <div class="row" style="gap:14px; margin-top:24px"><span class="chip"><span class="sw"></span>scion-daemon superfan</span><span class="chip"><span class="sw"></span>scion-cache superfan</span><span class="chip"><span class="sw"></span>merge-queue superfan</span></div>
+  <div class="source">Anthropic, “Redesigning source control” (the Scion post), anthropic.com/engineering/redesigning-source-control, Oct 2026. Built on Claude Tag.</div>
+</section>
+
+<section class="slide" data-era="7">
+  <div class="kicker"><span class="dot"></span>Era 7 · Systems of agents <span class="sep">/</span> Automated guardrails: auto mode</div>
+  <h1>Classifiers replace approvals. They catch more.</h1>
+  <p class="lead">1,053 paid testers. In each session one prompt was swapped for a clearly dangerous command.</p>
+  <div class="fill" data-widget="automode" data-label="auto mode vs humans" style="margin-top:30px"></div>
+  <div class="source">Anthropic, “Auto mode in production”, Aug 7, 2026; vendor-reported. Auto mode became the default for new Pro, Max and Team sessions on Aug 14, and on every plan from Sep 28.</div>
+</section>
+
+<section class="slide center" data-era="7">
+  <div class="kicker"><span class="dot" style="background:var(--scaf)"></span>Era 7 · Systems of agents <span class="sep">/</span> Scaffolding: Automated guardrails</div>
+  <h1>The guard rails run themselves</h1>
+  <div class="cols-3" style="margin-top:24px">
+    <div class="card" data-step="1" style="border-color:var(--scaf)"><span class="tag">Aug 2026</span><h2 style="margin-top:14px">Classifiers approve</h2><p class="body" style="margin-top:10px">Auto mode by default: risky actions stop without anyone clicking.</p></div>
+    <div class="card" data-step="2" style="border-color:var(--scaf)"><span class="tag">May 2026</span><h2 style="margin-top:14px">Containment</h2><p class="body" style="margin-top:10px">A sandbox, plus egress control: only the agent’s own session token gets out.</p></div>
+    <div class="card" data-step="3" style="border-color:var(--scaf)"><span class="tag">Jun 2026</span><h2 style="margin-top:14px">Their own identity</h2><p class="body" style="margin-top:10px">Team agents act as their own service accounts, never as the person who asked.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-era="7">
+  <div class="kicker"><span class="dot"></span>Era 7 · Systems of agents <span class="sep">/</span> Cost per task</div>
+  <h1>Compare cost per task, not price per token</h1>
+  <div class="cpt">
+    <div class="cpt-row" data-step="1"><b>Model A</b><span class="m">$3 per million tokens</span><span class="m">× 400k tokens to finish</span><div class="bar"><i style="width:57%"></i></div><em>$1.20</em></div>
+    <div class="cpt-row" data-step="2"><b>Model B</b><span class="m">$15 per million tokens</span><span class="m">× 60k tokens to finish</span><div class="bar"><i style="width:43%; background:var(--cc-550)"></i></div><em>$0.90</em></div>
+  </div>
+  <p class="lead" data-step="3" style="margin-top:28px">Too many things move the token count: the tokenizer, how long it thinks, how many loops and retries, how much is cached.</p>
+  <p class="lead" data-step="4" style="color:var(--ink); font-weight:600">So run your task on each model and compare what it cost to get it done.</p>
+  <div class="source">Illustrative numbers.</div>
+</section>
+
+<section class="slide" data-era="7">
+  <div class="kicker"><span class="dot"></span>Era 7 · Systems of agents <span class="sep">/</span> Models, effort, cost</div>
+  <h1>The Pareto frontier: the best you can get at each cost</h1>
+  <div class="fill" data-widget="pareto" data-label="cost / capability frontier" style="margin-top:6px"></div>
+  <div class="source">The line moves: Opus 5.5 is Fable-5.1-level on most work for 40% less than Opus 5 (Anthropic, Sep 2026; vendor-reported).</div>
+</section>
+
+<section class="slide" data-era="7">
+  <div class="kicker"><span class="dot"></span>Era 7 · Systems of agents <span class="sep">/</span> In Claude Code: Unshipping</div>
+  <h1>Better models need less harness</h1>
+  <div class="fill" data-widget="shrink" data-h="440" data-label="system prompt shrinking" style="margin-top:10px"></div>
+  <div class="row" data-step="2" style="gap:12px; flex-wrap:wrap; margin-top:14px"><span class="chip removed"><span class="sw" style="background:var(--critical)"></span><span class="label">/agents wizard · Jul</span></span><span class="chip removed"><span class="sw" style="background:var(--critical)"></span><span class="label">Ultraplan · Aug, after 4 months</span></span><span class="chip"><span class="sw"></span>/doctor prompt-audit, /skill-doctor · Sep: find your own dead weight</span></div>
+</section>
+
+<section class="slide" data-era="7">
+  <div class="kicker"><span class="dot"></span>Era 7 · Systems of agents <span class="sep">/</span> Then and now</div>
+  <h1>2026: from one session to systems of agents</h1>
+  <div class="tn">
+    <div class="tn-head"><span>Then</span><span></span><span>Now</span></div>
+    <div class="tn-row" data-step="1"><div class="then">One big model for everything</div><i>→</i><div class="now">A frontier model plans, cheaper ones execute</div></div>
+    <div class="tn-row" data-step="2"><div class="then">Long prompts and features for older models</div><i>→</i><div class="now">Unshipped: 80% of the prompt, and features with it</div></div>
+    <div class="tn-row" data-step="3"><div class="then">One session, one loop</div><i>→</i><div class="now">Workflows: graphs of loops, with gates</div></div>
+  </div>
+</section>
+
+<section class="slide" data-era="7">
+  <div class="kicker"><span class="dot"></span>Era 7 · Systems of agents <span class="sep">/</span> Lessons that still hold</div>
+  <h1>Lessons that still hold</h1>
+  <div class="lessons">
+    <div data-step="1"><span class="n">1</span><b>Measure cost per task.</b><p>Price per token says little. A pricier model that finishes sooner can cost less.</p></div>
+    <div data-step="2"><span class="n">2</span><b>Match the model to the job.</b><p>A frontier model plans; cheaper ones execute.</p></div>
+    <div data-step="3"><span class="n">3</span><b>Re-check your prompts when models change.</b><p>Anthropic cut 80% of its own. What helped old models can hold new ones back.</p></div>
+  </div>
+</section>
+
+<!-- ============================== ERA 8 ============================== -->
+
+<section class="slide era-card" data-era="8" data-time="1:50">
+  <div class="num">Era 8</div>
+  <h1>The bleeding edge</h1>
+  <div class="dates">October 2026</div>
+  <div class="facts">
+    <div class="fact" data-step="1"><div class="h"><i style="background:var(--ink)"></i>Became possible</div><div class="v">Machine-checked proofs; agents that test their own tests</div></div>
+    <div class="fact" data-step="2"><div class="h"><i style="background:var(--ink-2)"></i>The workflow</div><div class="v">Layered gates, shifted left</div></div>
+    <div class="fact" data-step="3"><div class="h"><i style="background:var(--human)"></i>The human</div><div class="v">The accountable owner of intent and specs</div></div>
+  </div>
+  <div data-step="4" style="margin-top:44px"><div data-widget="lanechips" data-era="8"></div></div>
+</section>
+
+<section class="slide" data-era="8">
+  <div class="kicker"><span class="dot"></span>Era 8 · The bleeding edge <span class="sep">/</span> The workflow</div>
+  <h1>Layered gates, shifted left</h1>
+  <p class="lead" style="margin-top:14px">Run every check as early as it can run, where it is cheapest, and let the agent run it.</p>
+  <div class="cols-4" style="margin-top:26px">
+    <div class="card" data-step="1" style="border-color:var(--scaf)"><span class="tag">While it edits</span><p class="body" style="margin-top:14px">Hooks and deny rules<br>Types<br>Static analysis</p></div>
+    <div class="card" data-step="2" style="border-color:var(--scaf)"><span class="tag">Before commit</span><p class="body" style="margin-top:14px">Thousands of fast tests<br>Mutation testing<br>Property-based tests<br>/verify</p></div>
+    <div class="card" data-step="3" style="border-color:var(--scaf)"><span class="tag">Before merge</span><p class="body" style="margin-top:14px">AI review<br>/security-review<br>Formal proofs, where it matters<br>An HTML explainer</p></div>
+    <div class="card" data-step="4" style="border-color:var(--scaf)"><span class="tag">After merge</span><p class="body" style="margin-top:14px">Feature flags<br>Canary releases<br>Automatic rollback</p></div>
+  </div>
+</section>
+
+<section class="slide" data-era="8">
+  <div class="kicker"><span class="dot" style="background:var(--scaf)"></span>Era 8 · The bleeding edge <span class="sep">/</span> Before commit: fast tests</div>
+  <h1>Thousands of tests, in seconds, on your machine</h1>
+  <p class="lead" style="margin-top:18px">An agent runs the suite after every change it makes. A 10-minute suite means it guesses; a 10-second suite means it checks.</p>
+  <div class="cols-4" style="margin-top:28px">
+    <div class="card" data-step="1"><h3>Mostly unit tests</h3><p class="body">Below the UI and the network</p></div>
+    <div class="card" data-step="2"><h3>Fakes, not services</h3><p class="body">An in-memory database, recorded responses</p></div>
+    <div class="card" data-step="3"><h3>In parallel</h3><p class="body">Vitest, Jest workers, <span class="mono">pytest -n</span>, <span class="mono">go test</span></p></div>
+    <div class="card" data-step="4"><h3>Only what changed</h3><p class="body"><span class="mono">vitest --changed</span>, <span class="mono">jest -o</span></p></div>
+  </div>
+  <p class="body" data-step="5" style="margin-top:24px; color:var(--ink)">Deterministic: no sleeps, no real clock, a fixed seed. A flaky test teaches the agent to ignore red.</p>
+</section>
+
+<section class="slide" data-era="8">
+  <div class="kicker"><span class="dot" style="background:var(--scaf)"></span>Era 8 · The bleeding edge <span class="sep">/</span> Shift left, deeper</div>
+  <h1>Deeper checks, now that agents write them</h1>
+  <div class="cols-3" style="margin-top:26px">
+    <div class="card" data-step="1" style="border-color:var(--scaf)"><span class="tag">Test the tests</span><h3 style="margin-top:12px">Mutation testing</h3><p class="body">Plants small bugs, like <span class="mono">&gt;=</span> to <span class="mono">&gt;</span>. If no test fails, the tests have a gap.</p></div>
+    <div class="card" data-step="2" style="border-color:var(--scaf)"><span class="tag">Rules, not examples</span><h3 style="margin-top:12px">Property-based tests</h3><p class="body">A rule that must always hold, tried on thousands of random inputs, shrunk to the smallest failure.</p></div>
+    <div class="card" data-step="3" style="border-color:var(--scaf)"><span class="tag">Proofs, not reviews</span><h3 style="margin-top:12px">Formal verification</h3><p class="body">A proof a machine checks. Oct 2026: Claude proved 239 OSS&#8209;Fuzz entry points never crash.</p></div>
+  </div>
+  <p class="lead" data-step="4" style="margin-top:26px">Each used to cost too much effort. Agents write them now, so they move left: into the change, before anyone reviews it.</p>
+  <div class="source">Formal proofs: Anthropic Frontier Red Team with Theorem, anthropic.com/research/formal-verification, Oct 22, 2026; vendor-reported.</div>
+</section>
+
+<section class="slide" data-era="8">
+  <div class="kicker"><span class="dot"></span>Era 8 · The bleeding edge <span class="sep">/</span> Before merge: explain the change</div>
+  <h1>“Make an HTML explainer of this PR.”</h1>
+  <div class="explainer">
+    <div class="ex-head" data-step="1"><span class="tag">PR #4182</span><h2>Retry-safe transfers</h2></div>
+    <div class="ex-grid">
+      <div class="ex-card" data-step="1"><h3>Intent</h3><p>A retried transfer must never move money twice.</p></div>
+      <div class="ex-card" data-step="2"><h3>Before → after</h3><div class="ex-diag"><span>retry</span><b>→</b><span class="bad">applied twice</span></div><div class="ex-diag"><span>retry + key</span><b>→</b><span class="ok">no-op</span></div></div>
+      <div class="ex-card" data-step="3"><h3>Evidence</h3><p><span class="ico good" style="display:inline-grid; width:26px; height:26px; font-size:15px">✓</span> 48 tests · 10,000 property cases · canary plan</p></div>
+      <div class="ex-card" data-step="4"><h3>Risk</h3><p>Low. Rollback: one flag, <span class="mono">transfers.idempotency</span>.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-era="8">
+  <div class="kicker"><span class="dot" style="background:var(--scaf)"></span>Era 8 · The bleeding edge <span class="sep">/</span> After merge: ship fast, unship faster</div>
+  <h1>“Rollback should be the most rehearsed path.”</h1>
+  <div class="fill" data-widget="canary" data-label="canary and rollback" style="margin-top:40px"></div>
+  <div class="source">Quote: Anthropic, “The AI-native SDLC playbook”, Aug 2026. The chart is a schematic scenario.</div>
+</section>
+
+<section class="slide" data-era="8">
+  <div class="kicker"><span class="dot"></span>Era 8 · The bleeding edge <span class="sep">/</span> Then and now</div>
+  <h1>October 2026: review moves from lines to intent</h1>
+  <div class="tn">
+    <div class="tn-head"><span>Then</span><span></span><span>Now</span></div>
+    <div class="tn-row" data-step="1"><div class="then">Reading every line of every PR</div><i>→</i><div class="now">Reviewing intent and evidence</div></div>
+    <div class="tn-row" data-step="2"><div class="then">Trusting a single gate</div><i>→</i><div class="now">Layered gates: tests, types, AI review, canaries, proofs</div></div>
+    <div class="tn-row" data-step="3"><div class="then">A slow suite, run before merge</div><i>→</i><div class="now">Thousands of fast tests, run on every change</div></div>
+  </div>
+</section>
+
+<section class="slide" data-era="8">
+  <div class="kicker"><span class="dot"></span>Era 8 · The bleeding edge <span class="sep">/</span> Lessons that still hold</div>
+  <h1>Lessons that still hold</h1>
+  <div class="lessons">
+    <div data-step="1"><span class="n">1</span><b>Review intent and evidence.</b><p>Not every line: what it should do, and the proof that it does.</p></div>
+    <div data-step="2"><span class="n">2</span><b>Layer the gates.</b><p>Tests, types, AI review, canaries, proofs. No single check is enough.</p></div>
+    <div data-step="3"><span class="n">3</span><b>You own what you ship.</b><p>Agents write the code. The responsibility stays with you.</p></div>
+  </div>
+</section>
+
+<!-- ============================== CLOSE ============================== -->
+
+<section class="slide center" data-era="8" data-rail="off" data-title="Thank you">
+  <h1 class="xxl">Thank you</h1>
+</section>
+
+</div></div>
+
+<script src="assets/data.js"></script>
+<script src="assets/deck.js"></script>
+<script src="assets/widgets-common.js"></script>
+<script src="assets/widgets-s2.js"></script>
+</body>
+</html>
